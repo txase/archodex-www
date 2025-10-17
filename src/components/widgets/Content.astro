@@ -1,8 +1,9 @@
 ---
+import { Image } from 'astro:assets';
+
 import type { Content as Props } from '~/types';
 import Headline from '../ui/Headline.astro';
 import WidgetWrapper from '../ui/WidgetWrapper.astro';
-import Image from '~/components/common/Image.astro';
 import Button from '~/components/ui/Button.astro';
 import ItemGrid from '../ui/ItemGrid.astro';
 
@@ -15,6 +16,7 @@ const {
   items = [],
   columns,
   image = await Astro.slots.render('image'),
+  imageDark = await Astro.slots.render('imageDark'),
   isReversed = false,
   isAfterContent = false,
 
@@ -66,22 +68,25 @@ const {
           }}
         />
       </div>
-      <div aria-hidden="true" class="mt-10 md:mt-0 md:basis-1/2">
+      <div aria-hidden="true" class="flex items-center mt-10 md:mt-0 md:basis-1/2">
         {
           image && (
-            <div class="relative m-auto max-w-4xl">
+            <div class:list={['relative', 'm-auto', 'max-w-4xl', imageDark ? 'dark:hidden' : '']}>
               {typeof image === 'string' ? (
                 <Fragment set:html={image} />
               ) : (
-                <Image
-                  class="mx-auto w-full rounded-lg bg-neutral-500 shadow-lg"
-                  width={500}
-                  height={500}
-                  widths={[400, 768]}
-                  sizes="(max-width: 768px) 100vw, 432px"
-                  layout="responsive"
-                  {...image}
-                />
+                <Image class="mx-auto w-full" layout="full-width" {...image} />
+              )}
+            </div>
+          )
+        }
+        {
+          imageDark && (
+            <div class:list={['relative', 'm-auto', 'max-w-4xl', 'hidden', 'dark:block']}>
+              {typeof imageDark === 'string' ? (
+                <Fragment set:html={imageDark} />
+              ) : (
+                <Image class="mx-auto w-full" layout="full-width" {...imageDark} />
               )}
             </div>
           )

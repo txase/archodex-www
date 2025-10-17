@@ -1,5 +1,5 @@
 ---
-import Image from '~/components/common/Image.astro';
+import { Image } from 'astro:assets';
 import Button from '~/components/ui/Button.astro';
 
 import type { Hero as Props } from '~/types';
@@ -12,6 +12,7 @@ const {
   content = await Astro.slots.render('content'),
   actions = await Astro.slots.render('actions'),
   image = await Astro.slots.render('image'),
+  imageDark = await Astro.slots.render('imageDark'),
 
   id,
   bg = await Astro.slots.render('bg'),
@@ -75,19 +76,47 @@ const {
       <div class="basis-1/2">
         {
           image && (
-            <div class="relative m-auto max-w-5xl intersect-once intercept-no-queue motion-safe:md:intersect:animate-fade motion-safe:md:opacity-0 intersect-quarter">
+            <div
+              class:list={[
+                'relative',
+                'm-auto',
+                'max-w-5xl',
+                'intersect-once',
+                'intercept-no-queue',
+                'motion-safe:md:intersect:animate-fade',
+                'motion-safe:md:opacity-0',
+                'intersect-quarter',
+                imageDark ? 'dark:hidden' : '',
+              ]}
+            >
               {typeof image === 'string' ? (
                 <Fragment set:html={image} />
               ) : (
-                <Image
-                  class="mx-auto rounded-md w-full"
-                  widths={[400, 768, 1024, 2040]}
-                  sizes="(max-width: 767px) 400px, (max-width: 1023px) 768px, (max-width: 2039px) 1024px, 2040px"
-                  loading="eager"
-                  width={600}
-                  height={600}
-                  {...image}
-                />
+                <Image class="mx-auto rounded-md w-full" loading="eager" {...image} />
+              )}
+            </div>
+          )
+        }
+        {
+          imageDark && (
+            <div
+              class:list={[
+                'relative',
+                'm-auto',
+                'max-w-5xl',
+                'intersect-once',
+                'intercept-no-queue',
+                'motion-safe:md:intersect:animate-fade',
+                'motion-safe:md:opacity-0',
+                'intersect-quarter',
+                'hidden',
+                'dark:block',
+              ]}
+            >
+              {typeof imageDark === 'string' ? (
+                <Fragment set:html={imageDark} />
+              ) : (
+                <Image class="mx-auto rounded-md w-full" loading="eager" {...imageDark} />
               )}
             </div>
           )
