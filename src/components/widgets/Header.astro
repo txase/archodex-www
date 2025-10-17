@@ -1,0 +1,216 @@
+---
+import { Icon } from 'astro-icon/components';
+import Logo from '~/components/Logo.astro';
+import ToggleTheme from '~/components/common/ToggleTheme.astro';
+import ToggleMenu from '~/components/common/ToggleMenu.astro';
+import Button from '~/components/ui/Button.astro';
+
+import { getHomePermalink } from '~/utils/permalinks';
+import { trimSlash, getAsset } from '~/utils/permalinks';
+import type { HeaderData as Props } from '~/types';
+
+const {
+  id = 'header',
+  links = [],
+  actions = [],
+  isSticky = false,
+  isFullWidth = false,
+  showToggleTheme = false,
+  showRssFeed = false,
+  position = 'center',
+} = Astro.props;
+
+const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
+---
+
+<header
+  class:list={[
+    { sticky: isSticky, relative: !isSticky },
+    'top-0',
+    'z-40',
+    'flex-none',
+    'mx-auto',
+    'w-full',
+    'bg-white/90',
+    'dark:bg-black/70',
+    'backdrop-blur-md',
+    'transition-[opacity]',
+    'ease-in-out',
+    'shadow-md',
+    'shadow-white',
+    'dark:shadow-black',
+    '[&.scroll>.announcement]:h-[3px]',
+    '[&.scroll>.announcement]:py-0',
+    '[&.scroll>.announcement]:text-primary',
+    '[&.scroll>.announcement_span]:border-primary',
+    '[&.expanded_#nav-shade]:block',
+  ]}
+  {...isSticky ? { 'data-aw-sticky-header': true } : {}}
+  {...id ? { id } : {}}
+>
+  <div
+    class="announcement px-4 py-2 w-full bg-primary text-xs font-semibold text-white overflow-hidden transition-all duration-300 ease-in-out"
+  >
+    <span class="flex gap-3 decoration-1">
+      <a class="w-full text-end hover:underline" href="/licensing">Archodex is Fair Source</a>
+      <span class="border-l"></span>
+      <a class="w-full hover:underline" target="_blank" rel="noopener" href="https://github.com/Archodex">
+        See our code on GitHub →
+      </a>
+    </span>
+  </div>
+
+  <div class="relative text-default py-3 px-3 md:px-6 w-full">
+    <div
+      class:list={[
+        'mx-auto w-full',
+        { 'md:flex md:justify-between': position !== 'center' },
+        { 'md:grid md:grid-cols-3 md:items-center': position === 'center' },
+        { 'max-w-7xl': !isFullWidth },
+      ]}
+    >
+      <div class:list={[{ 'mr-auto rtl:mr-0 rtl:ml-auto': position === 'right' }, 'flex justify-between']}>
+        <a class="flex items-center" href={getHomePermalink()}>
+          <Logo />
+        </a>
+        <div class="flex items-center md:hidden">
+          <ToggleMenu />
+        </div>
+      </div>
+      <div id="nav-shade" class="fixed top-0 left-0 w-screen h-screen bg-black opacity-50 hidden"></div>
+      <nav
+        class:list={[
+          'hidden',
+          'absolute',
+          'top-0',
+          'bottom-0',
+          'right-0',
+          'w-fit',
+          'h-screen',
+          'overflow-y-auto',
+          'overflow-x-hidden',
+          'md:static',
+          'md:top-auto',
+          'md:bottom-auto',
+          'md:right-auto',
+          'md:w-auto',
+          'md:h-auto',
+          'md:flex',
+          'md:mx-5',
+          'md:overflow-y-visible',
+          'md:overflow-x-auto',
+          'px-3',
+          'items-center',
+          'md:justify-self-center',
+          'bg-page',
+          'md:bg-transparent',
+          'shadow-xl',
+          'md:shadow-none',
+          'text-default',
+        ]}
+        aria-label="Main navigation"
+      >
+        <div class="mt-3 flex items-center justify-end md:hidden">
+          <ToggleMenu expanded />
+        </div>
+        <ul
+          class="flex flex-col md:flex-row md:self-center w-full md:w-auto text-xl md:text-[0.9375rem] tracking-[0.01rem] font-medium md:justify-center"
+        >
+          {
+            links.map(({ text, href, links }) => (
+              <li class={links?.length ? 'dropdown' : ''}>
+                {links?.length ? (
+                  <>
+                    <button
+                      type="button"
+                      class="hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap"
+                    >
+                      {text}{' '}
+                      <Icon
+                        name="tabler:chevron-down"
+                        class="w-4 h-4 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline text-primary"
+                      />
+                    </button>
+                    <ul class="dropdown-menu md:backdrop-blur-md rounded md:absolute pl-4 md:pl-0 md:hidden font-medium bg-page md:bg-white/90 md:dark:bg-black/90 md:min-w-[200px] md:drop-shadow-xl">
+                      {links.map(({ text, href, icon, openInNewTab }) => (
+                        <li>
+                          <a
+                            class:list={[
+                              'first:rounded-t',
+                              'last:rounded-b',
+                              'hover:text-link',
+                              'hover:bg-page',
+                              'hover:bg-opacity-100',
+                              'py-2',
+                              'px-5',
+                              'block',
+                              'whitespace-no-wrap',
+                              'flex',
+                              'items-stretch',
+                              'gap-1',
+                              { 'aw-link-active': href === currentPath },
+                            ]}
+                            href={href}
+                            target={openInNewTab ? '_blank' : undefined}
+                            rel={openInNewTab ? 'noopener noreferrer' : undefined}
+                          >
+                            {text}
+                            {icon && <Icon name={icon} class="size-[unset]" />}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <a
+                    class:list={[
+                      'hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap',
+                      { 'aw-link-active': href === currentPath },
+                    ]}
+                    href={href}
+                  >
+                    {text}
+                  </a>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <div
+        class:list={[
+          { 'ml-auto rtl:ml-0 rtl:mr-auto': position === 'left' },
+          'hidden md:self-center md:flex items-center md:mb-0 fixed w-full md:w-auto md:static justify-end left-0 rtl:left-auto rtl:right-0 bottom-0 p-3 md:p-0 md:justify-self-end',
+        ]}
+      >
+        <div class="items-center flex justify-between w-full md:w-auto">
+          <div class="flex">
+            {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 md:w-5 md:h-5 md:inline-block" />}
+            {
+              showRssFeed && (
+                <a
+                  class="text-muted dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:outline-none focus:ring-4 focus:ring-neutral-200 dark:focus:ring-neutral-700 rounded-lg text-sm p-2.5 inline-flex items-center"
+                  aria-label="RSS Feed"
+                  href={getAsset('/rss.xml')}
+                >
+                  <Icon name="tabler:rss" class="w-5 h-5" />
+                </a>
+              )
+            }
+          </div>
+          {
+            actions?.length ? (
+              <span class="ml-4 rtl:ml-0 rtl:mr-4">
+                {actions.map((btnProps) => (
+                  <Button {...btnProps} class="ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" />
+                ))}
+              </span>
+            ) : (
+              ''
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

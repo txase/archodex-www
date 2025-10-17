@@ -1,0 +1,19 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import type { MarkdownHeading } from 'astro';
+import Ruleset from '~/components/Ruleset';
+import { latestRulesets } from '~/utils/latestRulesets';
+
+const { latestVersion, rulesets } = await latestRulesets();
+
+const headings: MarkdownHeading[] = [
+  { depth: 2, text: 'Description', slug: 'description' },
+  { depth: 2, text: 'How to Enable', slug: 'how_to_enable' },
+  { depth: 2, text: 'Inputs', slug: 'inputs' },
+  { depth: 2, text: 'Contexts and Rules', slug: 'contexts_and_rules' },
+];
+---
+
+<StarlightPage frontmatter={{ title: '' }} headings={headings}>
+  <Ruleset rulesets={rulesets} latestVersion={latestVersion} client:only="react" />
+</StarlightPage>

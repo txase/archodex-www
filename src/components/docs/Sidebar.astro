@@ -1,0 +1,91 @@
+---
+import MobileMenuFooter from '@astrojs/starlight/components/MobileMenuFooter.astro';
+import SidebarPersister from '@astrojs/starlight/components/SidebarPersister.astro';
+import SidebarSublist from '@astrojs/starlight/components/SidebarSublist.astro';
+import type { SidebarEntry, SidebarGroup, SidebarLink } from 'node_modules/@astrojs/starlight/utils/routing/types';
+
+import { getCollection } from 'astro:content';
+
+import { latestRulesets } from '~/utils/latestRulesets';
+
+const { latestVersion, rulesets } = await latestRulesets();
+
+const staticDocs = (await getCollection('docs')).sort((a, b) => {
+  const diff = (a.data.sidebar.order ?? Number.MAX_VALUE) - (b.data.sidebar.order ?? Number.MAX_VALUE);
+  if (diff) return diff;
+  return a.id.localeCompare(b.id);
+});
+
+// NOTE: This algo only supports one level of nesting. If we need more, we'll need to refactor this.
+const sidebar: SidebarEntry[] = [];
+const nestedEntries: SidebarLink[] = [];
+for (const doc of staticDocs) {
+  const entries = doc.id.split('/').length <= 2 ? sidebar : nestedEntries;
+
+  entries.push({
+    label: doc.data.sidebar.label || doc.data.title,
+    type: 'link',
+    href: `/${doc.id}`,
+    attrs: {},
+    isCurrent: Astro.url.pathname === `/${doc.id}`,
+    badge: undefined,
+  });
+}
+
+for (const entry of nestedEntries) {
+  const parentParts = entry.href.split('/');
+  const parentId = parentParts.slice(0, -1).join('/');
+
+  const parent = sidebar.find(
+    (entry) =>
+      (entry.type === 'link' && entry.href === parentId) ||
+      (entry.type === 'group' && (entry.entries[0] as SidebarLink).href === parentId),
+  );
+  if (!parent) {
+    throw new Error(`Could not find parent for doc ${entry.href} (${entry.label})`);
+  }
+
+  const parentGroup = parent as unknown as SidebarGroup;
+
+  if (parent.type !== 'group') {
+    parentGroup.type = 'group';
+    parentGroup.entries = [
+      {
+        label: 'Overview',
+        type: 'link',
+        href: parent.href,
+        attrs: parent.attrs,
+        isCurrent: parent.isCurrent,
+        badge: undefined,
+      },
+    ];
+    delete (parentGroup as { href?: string }).href;
+    delete (parentGroup as { attrs?: string }).attrs;
+  }
+
+  parentGroup.entries.push(entry);
+}
+
+sidebar.push({
+  label: 'Built-in Rulesets',
+  type: 'group',
+  collapsed: false,
+  entries: Object.keys(rulesets[latestVersion]).map((ruleset) => ({
+    label: ruleset,
+    type: 'link',
+    href: `/docs/rulesets/${ruleset}`,
+    attrs: {},
+    isCurrent: Astro.url.pathname === `/docs/rulesets/${ruleset}`,
+    badge: undefined,
+  })),
+  badge: undefined,
+});
+---
+
+<SidebarPersister>
+  <SidebarSublist sublist={sidebar} />
+</SidebarPersister>
+
+<div class="md:sl-hidden">
+  <MobileMenuFooter />
+</div>

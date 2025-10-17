@@ -1,0 +1,39 @@
+---
+title: Dashboard
+description: Documentation on the Archodex Dashboard
+sidebar:
+  order: 4
+---
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+---
+
+The Archodex Dashboard makes it easy to get the information you need to get on with your tasks. For example, the
+[Secrets](./secrets) view makes it easy to see which workloads will be impacted if you rotate a secret. The
+[Apps](./apps) view makes it easy to understand the architecture of an application ahead of a refactoring project. And
+the [Environments](./environments) view makes it easy to find single-point-of-failure resources that are shared across
+environments.
+
+<CardGrid>
+  <LinkCard
+    title="Secrets"
+    description="Locate Secrets, which workloads access them, and where they may be hardcoded or duplicated"
+    href="dashboard/secrets"
+  />
+  <LinkCard
+    title="Apps"
+    description="View the architecture of Applications and drill into operational details"
+    href="dashboard/apps"
+  />
+  <LinkCard
+    title="Environments"
+    description="Find shared resources across environments"
+    href="dashboard/environments"
+  />
+  <LinkCard
+    title="Inventory"
+    description="View, filter, and drill into details of resources across all workloads"
+    href="dashboard/inventory"
+  />
+</CardGrid>

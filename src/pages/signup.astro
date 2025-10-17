@@ -1,0 +1,23 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import ContactUs from '~/components/widgets/Contact.astro';
+
+const metadata = { title: 'Request Early Access', description: 'Signup | Archodex' };
+---
+
+<Layout metadata={metadata}>
+  <HeroText title="Request Early Access" />
+
+  <ContactUs
+    id="form"
+    classes={{ container: 'pt-0 md:pt-0 lg:pt-0' }}
+    inputs={[
+      { type: 'hidden', name: 'subject', value: 'Early Access Request' },
+      { type: 'text', name: 'name', label: 'Name' },
+      { type: 'email', name: 'email', label: 'Email' },
+    ]}
+    textarea={{ name: 'use case', label: 'Briefly tell us about your use case' }}
+    button="Submit"
+  />
+</Layout>

@@ -1,0 +1,193 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+import Hero from '~/components/widgets/Hero.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import Typewriter from '~/components/widgets/Typewriter.astro';
+import Hero2 from '~/components/widgets/Hero2.astro';
+import Steps2 from '~/components/widgets/Steps2.astro';
+import Image from '~/components/common/Image.astro';
+
+import heroImage from '../assets/images/hero.svg';
+import resourceGraph from '../assets/images/resource-graph-3-2.svg';
+
+const metadata = { title: 'Archodex — Prevent DevSecOps Outages', ignoreTitleTemplate: true };
+
+const resources = ['Secrets', 'Databases', 'Buckets', 'Clusters', 'Pods', 'Endpoints', 'Environments'];
+const resourcesTextWidth = '9.5ch';
+
+const principals = ['Services', 'Users', 'Roles', 'Policies', 'Accounts', 'CI/CD workflows', 'Teams', 'Applications'];
+const principalsTextWidth = '12ch';
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero Widget ******************* -->
+
+  <Hero2
+    title="Know Every Secret. Rotate Without Fear."
+    subtitle="Track where your API keys are stored, audit which workloads use them, and rotate with confidence."
+    image={{
+      src: resourceGraph,
+      alt: 'Graph of resources and their relationships',
+      height: 400,
+      fetchPriority: 'high',
+    }}
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Launch Playground Demo',
+        href: `https://play.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}`,
+      },
+      { text: 'Start Free', href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}/signup` },
+    ]}
+  />
+
+  <!-- Problem Section *************** -->
+
+  <Steps
+    id="problem"
+    title="Blind Spots Cause Outages"
+    items={[
+      {
+        title: 'A Typical Task...',
+        description: 'Alex grabs a ticket to rotate the database password',
+        icon: 'tabler:label-filled',
+      },
+      {
+        title: 'With Missing Intel...',
+        description:
+          'Alex finds the password in their cloud secret vault, but misses that it is also stored in the on-prem vault',
+        icon: 'tabler:zoom-code-filled',
+      },
+      {
+        title: 'Causes a Misconfiguration...',
+        description: 'Alex rotates the cloud secret vault value',
+        icon: 'tabler:settings-filled',
+      },
+      {
+        title: 'And a Painful Outage.',
+        description: 'The API service goes down because it uses the on-prem secret vault for the database password',
+        icon: 'tabler:flame-filled',
+      },
+    ]}
+    classes={{ container: 'max-w-3xl', items: { icon: 'text-secondary border-secondary' } }}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-primary/5 dark:bg-transparent"></div>
+    </Fragment>
+  </Steps>
+
+  <!-- Solution Section *************** -->
+
+  <Hero>
+    <Fragment slot="title">
+      <style>
+        .hero-img::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+        }
+      </style>
+
+      <div class="overlay md:min-h-[400px]">
+        <div class="md:top-[50%] md:translate-y-[-50%] md:pr-[180px] text-left text-5xl md:absolute z-10">
+          A Platform Engineer's Safety Net
+          <br /><br />
+          Know Which
+          <span class="font-semibold text-primary highlight">
+            <Typewriter words={resources} width={resourcesTextWidth} duration="3" />
+          </span>
+          <br />
+          Are Accessed By Which
+          <span class="font-semibold text-primary highlight">
+            <Typewriter words={principals} width={principalsTextWidth} duration="3" />
+          </span>
+        </div>
+
+        <div class="hero-img relative hidden md:block">
+          <Image src={heroImage} alt="Part of a graph of relationships between resources" class="hero-img -z-10" />
+        </div>
+      </div>
+    </Fragment>
+  </Hero>
+
+  <!-- Use Cases Section *************** -->
+
+  <Features2
+    classes={{ items: { icon: 'text-secondary border-secondary' } }}
+    items={[
+      {
+        title: 'Prevent Outages',
+        description:
+          'Identify which resources, such as databases and object stores, are used (and shared) across applications, services, and environments.',
+        icon: 'tabler:flame-off',
+      },
+      {
+        title: 'Fix Security Risks',
+        description:
+          'Discover and fix common misconfigurations. Ensure least-privilege access and reduce blast radiuses.',
+        icon: 'tabler:shield-check',
+      },
+      {
+        title: 'Audit Secrets',
+        description:
+          'Discover when secrets have the same value across vaults and environments. Know which services use which secrets.',
+        icon: 'tabler:lock-password',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-primary/5 dark:bg-transparent"></div>
+    </Fragment>
+  </Features2>
+
+  <!-- How It Works -->
+
+  <Steps2
+    id="how-it-works"
+    title="How Archodex Works"
+    items={[
+      {
+        title: 'Sign up / Self-host',
+        description:
+          'Create a free, managed Archodex account in the data locality of your choice, or self-host Archodex in your own environment.',
+        icon: 'tabler:home-plus',
+      },
+      {
+        title: 'Instrument once',
+        description:
+          'Install the Archodex agent once in your Kubernetes clusters, cloud management accounts, and/or CI/CD systems. No application code modification necessary.',
+        icon: 'tabler:device-gamepad-3',
+      },
+      {
+        title: 'Intel aggregation',
+        description:
+          'The Archodex platform aggregates data in a graph database to help you understand how resources are accessed.',
+        icon: 'tabler:arrow-merge-both',
+      },
+      {
+        title: 'Insights',
+        description:
+          'The Archodex dashboard provides a birds-eye view of your workloads and secrets. Dashboard reports alert your team to problems, like duplicate keys used across environments, to investigate.',
+        icon: 'tabler:map',
+      },
+    ]}
+    classes={{ container: 'max-w-3xl' }}
+  />
+
+  <!-- CallToAction Widget *********** -->
+
+  <CallToAction
+    actions={[
+      { variant: 'primary', text: 'Request early access', href: '/signup', classes: { container: 'bg-white' } },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-primary/5 dark:bg-transparent"></div>
+    </Fragment>
+
+    <Fragment slot="title"> Solve Your DevSecOps Challenges Today </Fragment>
+  </CallToAction>
+</Layout>

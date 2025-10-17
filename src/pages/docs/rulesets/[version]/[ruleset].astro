@@ -1,0 +1,141 @@
+---
+import { Code } from '@astrojs/starlight/components';
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import type { MarkdownHeading } from 'astro';
+import { latestRulesets } from '~/utils/latestRulesets';
+
+const { latestVersion, rulesets } = await latestRulesets();
+
+export async function getStaticPaths() {
+  const { rulesets } = await latestRulesets();
+
+  const paths: { params: { version: string; ruleset: string } }[] = [];
+  for (const version in rulesets) {
+    for (const ruleset in rulesets[version]) {
+      paths.push({ params: { version, ruleset } });
+    }
+  }
+
+  return paths;
+}
+
+const camelToUpperCase = (str: string) => {
+  return str.replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase();
+};
+
+const { version, ruleset } = Astro.params;
+
+const rule = rulesets[version][ruleset];
+
+const inputs = Object.entries(rule.Inputs || {});
+
+const headings: MarkdownHeading[] = [
+  { depth: 2, text: 'Description', slug: 'description' },
+  { depth: 2, text: 'How to Enable', slug: 'how_to_enable' },
+  { depth: 2, text: 'Inputs', slug: 'inputs' },
+];
+
+for (const input in rule.Inputs) {
+  headings.push({ depth: 3, text: input, slug: `inputs_${input}` });
+}
+
+headings.push({ depth: 2, text: 'Contexts and Rules', slug: 'contexts_and_rules' });
+---
+
+<StarlightPage frontmatter={{ title: ruleset }} headings={headings}>
+  <form>
+    <label for="version"><strong>Agent Version:</strong></label>
+    <select id="version">
+      <option value={`/docs/rulesets/dev/${ruleset}`} selected={version === 'dev'}>Dev</option>
+
+      <option value={`/docs/rulesets/${ruleset}`} selected={version === latestVersion}>
+        Latest ({latestVersion.replace(/^agent-/, '')})
+      </option>
+
+      {
+        Object.keys(rulesets)
+          .filter((ver) => ruleset in rulesets[ver])
+          .map((ver) => (
+            <option value={`/docs/rulesets/${ver}/${ruleset}`} selected={version === ver && version !== latestVersion}>
+              {ver.replace(/^agent-/, '')}
+            </option>
+          ))
+      }
+    </select>
+  </form>
+
+  <h2 id="description">{rule.Name} Archodex Ruleset</h2>
+  <p>{rule.Description}</p>
+  <h3 id="how_to_enable">How to Enable</h3>
+  {
+    rule.Default ? (
+      <>
+        <p>This ruleset is enabled by default. To disable:</p>
+        <Code
+          code={`$ archodex --disable-rulesets ${ruleset}\n# or\n$ ARCHODEX_DISABLE_RULESETS=${ruleset} archodex`}
+          frame="terminal"
+          lang="sh"
+        />
+      </>
+    ) : (
+      <>
+        <p>This ruleset is disabled by default. To enable:</p>
+        <Code
+          code={`$ archodex --enable-rulesets ${ruleset}\n# or\n$ ARCHODEX_ENABLE_RULESETS=${ruleset} archodex`}
+          frame="terminal"
+          lang="sh"
+        />
+      </>
+    )
+  }
+  <h3 id="inputs">Inputs</h3>
+  {
+    inputs.length > 0 ? (
+      inputs.map(([name, definition]) => (
+        <>
+          <h4 id={`inputs_${name}`}>{name}</h4>
+          <p>{definition.Description}</p>
+          <p>
+            <strong>Required:</strong> {definition.Required ? 'Yes' : 'No'}
+            <br />
+            <strong>Command Line Argument:</strong>{' '}
+            <code>
+              --ruleset-input {ruleset}:{name}={'<value>'}
+            </code>
+            <br />
+            <strong>Environment Variables:</strong>
+            <ul>
+              <li>
+                <code>{`ARCHODEX_RULESET_INPUT_${camelToUpperCase(ruleset).replace('@', '_')}_${camelToUpperCase(name)}`}</code>
+              </li>
+              <li>
+                <code>{camelToUpperCase(name)}</code>
+              </li>
+            </ul>
+          </p>
+        </>
+      ))
+    ) : (
+      <p>No inputs required</p>
+    )
+  }
+  <h3 id="contexts_and_rules">Contexts and Rules</h3>
+  <Code code={rule.RulesYaml} lang="yaml" wrap />
+
+  <script is:inline define:vars={{ ruleset }}>
+    const select = document.getElementById('version');
+    if (select.value !== window.location.pathname) {
+      select.value = window.location.pathname;
+    }
+
+    select.onchange = () => {
+      window.location.href = select.value;
+    };
+
+    // Because we can render this page via an Astro rewrite, we may need to manually set the current page in the sidebar
+    const sidebarEntry = document.querySelector(`a[href="/docs/rulesets/${ruleset}"]`);
+    if (sidebarEntry) {
+      sidebarEntry.setAttribute('aria-current', 'page');
+    }
+  </script>
+</StarlightPage>

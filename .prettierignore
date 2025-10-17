@@ -1,0 +1,8 @@
+dist
+node_modules
+LICENSE.md
+.github
+.changeset
+
+# PostHog snippet
+src/components/PostHog.astro

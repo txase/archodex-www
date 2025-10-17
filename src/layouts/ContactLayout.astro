@@ -1,0 +1,31 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import ContactUs from '~/components/widgets/Contact.astro';
+
+const metadata = { title: 'Contact', description: 'Contact | Archodex' };
+
+export interface Props {
+  prefill?: string;
+}
+
+const { prefill } = Astro.props;
+---
+
+<Layout metadata={metadata}>
+  <!-- HeroText Widget ******************* -->
+
+  <HeroText title="Contact" />
+
+  <ContactUs
+    id="form"
+    classes={{ container: 'pt-0 md:pt-0 lg:pt-0' }}
+    inputs={[
+      { type: 'hidden', name: 'subject', value: 'Contact Form Submission' },
+      { type: 'text', name: 'name', label: 'Name' },
+      { type: 'email', name: 'email', label: 'Email' },
+    ]}
+    textarea={{ label: 'Message', value: prefill }}
+    button="Submit"
+  />
+</Layout>

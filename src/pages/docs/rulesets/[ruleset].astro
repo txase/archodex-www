@@ -1,0 +1,22 @@
+---
+import { latestRulesets } from '~/utils/latestRulesets';
+
+const { latestVersion } = await latestRulesets();
+
+export async function getStaticPaths() {
+  const { rulesets } = await latestRulesets();
+
+  const paths: { params: { ruleset: string } }[] = [];
+  for (const version in rulesets) {
+    for (const ruleset in rulesets[version]) {
+      paths.push({ params: { ruleset } });
+    }
+  }
+
+  return paths;
+}
+
+const { ruleset } = Astro.params;
+
+return Astro.rewrite(`/docs/rulesets/${latestVersion}/${ruleset}`);
+---

@@ -1,0 +1,492 @@
+---
+title: Rulesets
+description: Documentation on Archodex Instrumentation Rulesets
+sidebar:
+  order: 6
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+---
+
+Archodex's powerful instrumentation is driven by rulesets that instruct the Archodex Agent on which network requests to
+observe and what data to capture. Let's take a look at the definition for two typical Rulesets:
+[`github_actions@v1`](./rulesets/github_actions@v1) and [`hasicorp_vault@v1`](./rulesets/hashicorp_vault@v1). These two
+rulesets contain different rules, and the documentation below will reference them to demonstrate all of the Ruleset
+components.
+
+## Metadata
+
+Rules start with metadata. The following is from the `github_actions@v1` ruleset:
+
+```yaml
+Name: GitHub Actions
+Default: true
+Description: >-
+  This ruleset captures context information when the Archodex Agent is run from within a GitHub Actions Workflow.
+```
+
+### `Name`
+
+Required: Yes Type: String
+
+The `Name` value is a short descriptive name for the Ruleset that is used in generated docs.
+
+### `Default`
+
+Required: No Type: Boolean Default: `false`
+
+Rulesets built-in to Archodex Agent releases may contain an additional `Default` value. When this is a built-in ruleset
+with a `Default` value of `true`, this ruleset will be enabled unless the `--disable-ruleset` argument or
+`ARCHODEX_DISABLE_RULESETS` environment variable is used to disable it. When this is a built-in ruleset with a `Default`
+value of `false` (or unset), this ruleset must be enabled via the `--enable-ruleset` argument or
+`ARCHODEX_ENABLE_RULESETS` environment variable.
+
+### `Description`
+
+Required: Yes Type: String
+
+The `Description` value is a blurb of text that is used in generated docs. It should explain in reasonable detail what
+observations are captured.
+
+## Inputs
+
+Required: No Type: Map of Input Names to Input Schemas.
+
+Many Rulesets have required and/or optional Inputs. Input values are provided as strings. For example, the
+`hashicorp_vault@v1` Ruleset has an Input to define the address of the Value server for capturing traffic:
+
+```yaml
+---
+Inputs:
+  VaultAddr:
+    Description: The address of the HashiCorp Vault server
+    Required: true
+```
+
+### Input Name
+
+Each Input has a name, e.g. `VaultAddr` above. The Archodex Agent looks for Input values based on this name. Input
+values can be provided as either command line arguments or environment variables, with command line arguments taking
+precedence.
+
+#### Command Line Arguments
+
+Input values can be specified as arguments:
+
+```sh
+$ archodex --enable-rulesets hashicorp_vault@v1 --ruleset-input hashicorp_vault@v1:VaultAddr='<value>'
+```
+
+Multiple Input values can be provided via additional `--ruleset-input` arguments.
+
+### Environment Variables
+
+Input values can be specified as environment variables. The Ruleset ID and Ruleset Input names are first converted from
+`snake_case` and `PascalCase` to `SCREAMING_SNAKE_CASE`. Two variables are then checked, in precedence order,
+`ARCHODEX_RULESET_INPUT_<RULESET_ID>_<INPUT_NAME>` and `<INPUT_NAME>`.
+
+```sh
+$ export ARCHODEX_RULESET_INPUT_HASHICORP_VAULT_V1_VAULT_ADDR='<value>'
+
+  OR
+
+$ export VAULT_ADDR='<value>'
+
+$ archodex --enable-rulesets hashicorp_vault@v1
+```
+
+### Input Schema
+
+#### `Description`
+
+Required: Yes Type: String
+
+Each Input has a short description that is used in generated docs.
+
+#### `Required`
+
+Required: No Type: Boolean Default: `false`
+
+This informs the Agent on whether an Input value is required. The Agent will exit with an error if an enabled Ruleset
+has an unspecified required Input.
+
+## Contexts
+
+Required: No Type: Array of Context Definitions Interpolation Contexts: [Agent](#agent-context),
+[Inputs](#inputs-context)
+
+Rulesets may define Contexts. A Context defines Resources and Principals that are determined by the environment the
+Archodex Agent is running within. For example, the `github_actions@v1` Ruleset has a Context definition that captures
+Resources for the GitHub Actions Workflow that is being executed, the GitHub Actor whose permissions are used while
+executing the Workflow, and the GitHub Actor who triggered the Workflow. It also defines three Principals for each of
+these Resources. When Events are captured by Rules, these Principals will also be recorded as causing the events.
+
+&lt;TODO: Add links above to Resources and Principals definitions&gt;
+
+```yaml
+---
+Contexts:
+  - Conditions:
+      '{Agent.Env.GITHUB_ACTIONS}': true
+    ResourceCaptures:
+      - Type: GitHub Service
+        Id: '{Agent.Env.GITHUB_SERVER_URL}'
+        Contains:
+          - Type: Organization
+            Id: '{Agent.Env.GITHUB_REPOSITORY_OWNER}'
+            Contains:
+              - Type: Git Repository
+                Id: '{Agent.Env.GITHUB_REPOSITORY}'
+                Contains:
+                  - Type: GitHub Actions Workflow
+                    Id: '{Agent.Env.GITHUB_WORKFLOW_REF}'
+          - Type: Actor
+            Id: '{Agent.Env.GITHUB_ACTOR}'
+          - Type: Actor
+            Id: '{Agent.Env.GITHUB_TRIGGERING_ACTOR}'
+    Principals:
+      - Resource:
+          - Type: GitHub Service
+            Id: '{Agent.Env.GITHUB_SERVER_URL}'
+          - Type: Actor
+            Id: '{Agent.Env.GITHUB_TRIGGERING_ACTOR}'
+        Event: Assumed
+      - Resource:
+          - Type: GitHub Service
+            Id: '{Agent.Env.GITHUB_SERVER_URL}'
+          - Type: Actor
+            Id: '{Agent.Env.GITHUB_ACTOR}'
+        Event: Invoked
+      - Resource:
+          - Type: GitHub Service
+            Id: '{Agent.Env.GITHUB_SERVER_URL}'
+          - Type: Organization
+            Id: '{Agent.Env.GITHUB_REPOSITORY_OWNER}'
+          - Type: Git Repository
+            Id: '{Agent.Env.GITHUB_REPOSITORY}'
+          - Type: GitHub Actions Workflow
+            Id: '{Agent.Env.GITHUB_WORKFLOW_REF}'
+```
+
+### `Conditions`
+
+Required: No Type: Array of Conditions
+
+Many Archodex Rulesets may be enabled in environments that do not match the Ruleset use case. For example, the
+`github_actions@v1` Ruleset is enabled by default, but the Archodex Agent may be running in a Kubernetes Cluster instead
+of a GitHub Actions Workflow. `Conditions` instructs the Agent to create Contexts only when the environment matches the
+Ruleset use case.
+
+Each Condition in the array is evaluated independently. Contexts are created only when all Conditions evaluate to
+`true`, effectively creating a logical `AND` of array of Conditions.
+
+Each Condition is a pair of values that evaluate as `true` when both the values match. By convention, the Key of a
+Condition is an interpolated value from the environment, and the Value of a Condition is the expected value. In the
+example Condition above we have:
+
+```yaml
+'{Agent.Env.GITHUB_ACTIONS}': true
+```
+
+This Condition evaluates to `true` when the value of the `GITHUB_ACTIONS` environment variable is set to `'true'`.
+GitHub Actions
+[sets this environment variable when executing Workflows](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#default-environment-variables),
+making it a useful test for whether the Archodex Agent is running in a GitHub Actions Workflow.
+
+### `ResourceCaptures`
+
+Required: Yes Type: Nested Array of Resources
+
+`ResourceCaptures` defines all the Resources that exist in the environment.
+
+&lt;TODO: Link to definitions above&gt;
+
+### `Principals`
+
+Required: Yes Type: Array of Principals
+
+`Principals` defines the chain of Principals that have caused the current context. For example, the GitHub Actions
+Workflow will be recorded as _Directly_ causing events that are recorded in the Workflow, while the GitHub Actor that
+triggered a GitHub Actions Workflow will be recorded as _Indirectly_ causing all the events that are captured during the
+Workflow.
+
+&lt;TODO: Link to definitions above&gt;
+
+## Rules
+
+Required: No Type: Array of Rules
+
+Rulesets may define Rules that instruct the Archodex Agent how to instrument and observe network activity to record
+Resources and Events. For example, the `hashicorp_vault@v1` Ruleset contains a Rule to capture HTTPS requests that
+access secrets:
+
+```yaml
+---
+Rules:
+  - Hostnames:
+      - '{Inputs.VaultAddr}'
+    TransportRules:
+      - Http:
+          Request:
+            Methods:
+              - GET
+              - POST
+              - DELETE
+            Routes:
+              - /v1/:SecretMountPath/data/:Path+
+              - /v1/:SecretMountPath/metadata/:Path+
+              - /v1/:SecretMountPath/:Path+
+            IgnoreRoutes:
+              - /v1/auth/*
+              - /v1/sys/*
+          Response:
+            Body:
+              MountType:
+                Path: $.mount_type
+                Value: kv
+          ResourceCaptures:
+            - Type: HashiCorp Vault Service
+              Id: '{TLSServerName}'
+              Contains:
+                - Type: Secrets Engine Mount
+                  Id: '{Request.Path.SecretMountPath}'
+                  Contains:
+                    - Type: Secret
+                      Id: '{Request.Path.Path}'
+          EventCaptures:
+            - Events:
+                - Types:
+                    - '{Request.Method}'
+                  Resources:
+                    - - Type: HashiCorp Vault Service
+                        Id: '{TLSServerName}'
+                      - Type: Secrets Engine Mount
+                        Id: '{Request.Path.SecretMountPath}'
+                      - Type: Secret
+                        Id: '{Request.Path.Path}'
+```
+
+### `Hostname`
+
+Required: Yes Type: Array of Strings Interpolation Contexts: [Agent](#agent-context), [Inputs](#inputs-context)
+
+The Archodex Agent filters network connections by hostname first before processing any network activity. Hostname
+Filters may be specified as static strings or with one wildcard that may not be at the end of the hostname. The
+following examples are valid examples of hostname filters:
+
+- `vault.acme.com`
+- `*.acme.com`
+- `s3.*.amazonaws.com`
+
+These filters are evaluated against the
+[TLS Server Name Indication](https://en.wikipedia.org/wiki/Server_Name_Indication) included in the network connection
+headers.
+
+### `TransportRules`
+
+Required: Yes Type: Array of Transport Rules
+
+`TransportRules` define observation rules for network connections that have matched the [`Hostname`](#hostname) filter.
+These rules are defined by the type of
+[OSI Layer 7 (Application)](https://en.wikipedia.org/wiki/OSI_model#Layer_architecture) protocol used. One and only one
+Transport Rule Type (e.g. [`Http`](#http)) may be specified per Transport Rule.
+
+#### `Http`
+
+The Archodex Agent supports HTTP protocol versions 1.1 and 2.0. The same Transport Rule definition is used for both.
+
+##### `Http.Request.Methods`
+
+Required: Yes Type: Array of Strings Interpolation Contexts: [Agent](#agent-context), [Inputs](#inputs-context)
+
+The list of HTTP Methods to observe. Requests with HTTP Methods that are not included in this list are ignored for this
+Transport Rule.
+
+##### `Http.Request.Routes`
+
+Required: Yes Type: Array of Strings Interpolation Contexts: [Agent](#agent-context), [Inputs](#inputs-context)
+
+A list of HTTP Routes to observe. Requests that do not match one of the specified routes in this list are ignored for
+this Transport Rule. Routes may include parameters that can be referenced in Interpolation Contexts when capturing
+Resources and Events:
+
+| Pattern                         | Kind                | Description                                                                    |
+| ------------------------------- | ------------------- | ------------------------------------------------------------------------------ |
+| `:Name`                         | `Normal`            | Matches a path piece, excludes `/`                                             |
+| `:Name?`                        | `Optional`          | Matches an optional path piece, excludes `/`                                   |
+| `/:Name?/` `/:Name?`            | `OptionalSegment`   | Matches an optional path segment, excludes `/`, prefix or suffix should be `/` |
+| `+` `:Name+`                    | `OneOrMore`         | Matches a path piece, includes `/`                                             |
+| `*` `:Name*`                    | `ZeroOrMore`        | Matches an optional path piece, includes `/`                                   |
+| `/*/` `/*` `/:Name*/` `/:Name*` | `ZeroOrMoreSegment` | Matches zero or more path segments, prefix or suffix should be `/`             |
+
+For example, the `hashicorp_vault@v1` Ruleset includes the route `/v1/:SecretMountPath/:Path+` that matches the
+following paths:
+
+| Path                          | `SecretMountPath` value | `Path` value   |
+| ----------------------------- | ----------------------- | -------------- |
+| /v1/acme_secrets/db_creds     | `acme_secrets`          | `db_creds`     |
+| /v1/acme_secrets/prod/api_key | `acme_secrets`          | `prod/api_key` |
+
+##### `Http.Request.IgnoreRoutes`
+
+Required: No Type: Array of Strings Interpolation Contexts: [Agent](#agent-context), [Inputs](#inputs-context)
+
+A list of HTTP Routes to ignore even if matched by routes specified in [`Http.Request.Routes`](#httprequestroutes). For
+example, this is used by the `hashicorp_vault@v1` Ruleset to filter out administrative paths that can match secret route
+specifications.
+
+##### `Http.Request.Body`
+
+Required: No Type: Map of values in Request bodies Interpolation Contexts: [Agent](#agent-context),
+[Inputs](#inputs-context)
+
+Some HTTP requests contain bodies of data. If this rule value is specified, the Archodex Agent will attempt to parse the
+body into structured data, use a [JSONPath](https://en.wikipedia.org/wiki/JSONPath) to extract a value, and compare the
+extracted value against an expected value. The request will be ignored for this Transport Rule if they do not match. If
+they do match, the extracted value can be referenced in Interpolation Contexts when capturing Resources and Events.
+
+For example, a POST request may include the following body:
+
+```json
+{ "id": "f88d7r2o", "type": "sprocket", "color": "red" }
+```
+
+This would match the following `Http.Request.Body` rule definition that only captures requests for red sprockets:
+
+```yaml
+Body:
+  Type:
+    Path: $.type
+    Value: sprocket
+  Color:
+    Path: $.color
+    Value: red
+```
+
+<Aside>
+  [JSONPath](https://www.rfc-editor.org/rfc/rfc9535.html) is an emerging standard with many historical libraries that
+  have slightly different behaviors. The Archodex Agent uses the [jsonpath-rust](https://github.com/besok/jsonpath-rust)
+  library to evaluate JSONPaths. If you need to develop a complex JSONPath you may want to check that it evaluates
+  correctly against this library.
+</Aside>
+
+##### `Http.Response.Body`
+
+Required: No Type: Map of values in Response bodies Interpolation Contexts: [Agent](#agent-context),
+[Inputs](#inputs-context)
+
+This definition value works the same as for [`Http.Request.Body`](#httprequestbody), but for matching and extracting
+data from HTTP Response bodies instead of HTTP Request bodies. A Response that does not match all the values specified
+will be ignored. Refer to the [`Http.Request.Body`](#httprequestbody) documentation above for details.
+
+##### `Http.ResourceCaptures`
+
+Required: Yes Type: Nested Array of Resources Interpolation Contexts: [Agent](#agent-context),
+[Inputs](#inputs-context), [TLS Server Name](#tls-server-name), [HTTP Request](#http-request-context),
+[HTTP Response](#http-response-context)
+
+`ResourceCaptures` defines all the Resources that are known to exist based upon the matched HTTP Request/Response.
+
+&lt;TODO: Link to definitions above&gt;
+
+##### `Http.EventCaptures`
+
+Required: Yes Type: Array of Events
+
+`EventCaptures` defines all the Events that have occurred based upon the matched HTTP Request/Response. The chain of
+Principals that caused the event are determined by the Context established by a Ruleset (which may be this or another
+Ruleset). The Event Type and the Resource are specified by this rule.
+
+###### Event `Types`
+
+Required: Yes Type: Array of Strings
+
+An Event Type describes what occurred. For example, a GitHub Actor may cause an Event with the _Type_ `Triggered` when
+they start a GitHub Actions Workflow. Multiple Event Types may be specified, in which case separate events are created
+for each Event Type.
+
+###### Event `Resources`
+
+Required: Yes Type: Array of Resources
+
+Event Resources describe which resources was acted upon by a Principal. For example, a GitHub Actor may cause an Event
+with a GitHub Actions Workflow as the _Resource_ when they start the Workflow. Multiple Resources may be specified, in
+which case separate events are created for each Resource.
+
+## Interpolations
+
+Many components of Rulesets can utilize Interpolations to generate values at runtime. For example, the
+`github_actions@v1` Ruleset uses an Interpolation in a Context Condition:
+
+```yaml
+'{Agent.Env.GITHUB_ACTIONS}': true
+```
+
+Where interpolations are supported (see each Ruleset component's definition for details), they can be used to replace
+the Interpolation with a string from an Interpolation Context. Different Ruleset Components have different Interpolation
+Context data that can be referenced. For example, the above Condition Interpolation can use values from the
+[Agent Context](#agent-context), which includes environment variables.
+
+### Syntax
+
+Interpolations are found within strings enclosed inside `{}` brackets. They may comprise the entire string value, e.g.
+`"{Agent.Env.GITHUB_ACTIONS}"`, they may be used for part of a string value, e.g. `"Method: {Request.Method}"`, and they
+may be used multiple times, e.g. `"{Request.Path.Key}: {Request.Path.Value}"`.
+
+### `Agent` Context
+
+The `Agent` Interpolation Context includes data from the environment the Archodex Agent is running within.
+
+#### `Agent.Env`
+
+The `Agent.Env` Interpolation Context contains environment variables as a map of key/value pairs under the `Agent.Env`
+path. For example, the `GITHUB_ACTIONS` environment variable can be interpolated as `"{Agent.Env.GITHUB_ACTIONS}"`.
+
+### `Inputs` Context
+
+The `Inputs` Interpolation Context includes a map of key/value pairs of Input names to values. For example, the
+`hashicorp_vault@v1` Ruleset has an input named `VaultAddr`. This value can be interpolated as `"{Inputs.VaultAddr}"`.
+
+### Http `Request` Context
+
+The `Request` Context for an [Http Transport Rule](#http) includes data extracted from the request's method, route path,
+headers, and body.
+
+#### Http `Request.Method`
+
+The Method of the HTTP Request.
+
+#### Http `Request.Path`
+
+The `Request.Path` Interpolation Context includes a map of key/value pairs of HTTP route parameters to the path values
+from the request. See [`Http.Request.Routes`](#httprequestroutes) for details.
+
+#### Http `Request.Headers`
+
+The `Request.Headers` Interpolation Context includes a map of key/value pairs of HTTP request headers to values. If a
+request header is sent multiple times its values are joined together separated by a comma (`,`).
+
+#### Http `Request.BodyCaptures`
+
+The `Request.BodyCaptures` Interpolation Context includes a map of key/value pairs of extracted HTTP body values from
+the request. See [`Http.Request.Body`](#httprequestbody) for details.
+
+### Http `Response` Context
+
+The `Response` Context for an [Http Transport Rule](#http) includes data extracted from the response's status, headers,
+and body.
+
+#### Http `Response.Status`
+
+The Status Code of the HTTP Request, as a numeric value (e.g. `200`).
+
+#### Http `Response.Headers`
+
+The `Response.Headers` Interpolation Context includes a map of key/value pairs of HTTP response headers to values. If a
+response header is sent multiple times its values are joined together separated by a comma (`,`).
+
+#### Http `Response.BodyCaptures`
+
+The `Response.BodyCaptures` Interpolation Context includes a map of key/value pairs of extracted HTTP body values from
+the response. See [`Http.Response.Body`](#httpresponsebody) for details.

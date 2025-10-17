@@ -1,0 +1,16 @@
+---
+import ContactLayout from '~/layouts/ContactLayout.astro';
+
+const CONTACT_US_MESSAGE = `Hi Archodex Team,
+
+I would like to inquire about a customized plan for Archodex. I have the following needs:
+
+- <Ex: Higher limits on observed API calls>
+- <Ex: SAML authentication>
+- <Ex: Air-gapped on-prem installation>
+
+Regards
+`;
+---
+
+<ContactLayout prefill={CONTACT_US_MESSAGE} />

@@ -1,0 +1,168 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import { findImage } from '~/utils/images';
+import {
+  getImagesOptimized,
+  astroAsseetsOptimizer,
+  unpicOptimizer,
+  isUnpicCompatible,
+  type ImageProps,
+} from '~/utils/images-optimization';
+
+type Props = ImageProps;
+type ImageType = { src: string; attributes: HTMLAttributes<'img'> };
+
+const props = Astro.props;
+
+if (props.alt === undefined || props.alt === null) {
+  throw new Error();
+}
+
+if (typeof props.width === 'string') {
+  props.width = parseInt(props.width);
+}
+
+if (typeof props.height === 'string') {
+  props.height = parseInt(props.height);
+}
+
+if (!props.loading) {
+  props.loading = 'lazy';
+}
+
+if (!props.decoding) {
+  props.decoding = 'async';
+}
+
+const _image = await findImage(props.src);
+
+let image: ImageType | undefined = undefined;
+
+if (
+  typeof _image === 'string' &&
+  (_image.startsWith('http://') || _image.startsWith('https://')) &&
+  isUnpicCompatible(_image)
+) {
+  image = await getImagesOptimized(_image, props, unpicOptimizer);
+} else if (_image) {
+  image = await getImagesOptimized(_image, props, astroAsseetsOptimizer);
+}
+
+// Archodex: Remove style attribute from image for CSP. Convert to Tailwind classes.
+if (image) {
+  let inputStyle = image.attributes.style;
+
+  let style: Record<string, string>;
+  if (typeof inputStyle === 'string') {
+    style = inputStyle
+      .split(';')
+      .filter((s) => s)
+      .map((s) => {
+        const [key, value] = s.split(':');
+        return { key: key.trim(), value: value.trim() };
+      })
+      .reduce((acc, { key, value }) => {
+        acc[key] = value;
+        return acc;
+      }, {});
+  } else if (inputStyle && typeof inputStyle === 'object') {
+    style = Object.entries(inputStyle).reduce((acc, [key, value]) => {
+      if (typeof value === 'string' || typeof value === 'number') {
+        acc[key] = value.toString();
+      }
+      return acc;
+    }, {});
+  } else {
+    style = {};
+  }
+
+  for (const [attr, value] of Object.entries(style)) {
+    if (typeof value !== 'string') {
+      continue;
+    }
+
+    let addClass: string | undefined;
+
+    switch (attr) {
+      case 'object-fit':
+        addClass = `object-${value}`;
+        break;
+
+      case 'object-position':
+        addClass = `object-${value.replace(' ', '-')}`;
+        break;
+
+      case 'width':
+        if (value === '100%') {
+          addClass = 'w-full';
+        } else if (value.endsWith('px')) {
+          addClass = `w-[${value}]`;
+        } else {
+          throw new Error(`Unsupported Image optimizer style attribute: ${attr}=${value}`);
+        }
+        break;
+
+      case 'height':
+        if (value === 'auto') {
+          addClass = 'h-auto';
+        } else if (value === '100%') {
+          addClass = 'h-full';
+        } else if (value.endsWith('px')) {
+          addClass = `h-[${value}]`;
+        } else {
+          throw new Error(`Unsupported Image optimizer style attribute: ${attr}=${value}`);
+        }
+        break;
+
+      case 'max-width':
+        if (value === '100%') {
+          addClass = 'max-w-full';
+        } else if (value.endsWith('px')) {
+          addClass = `max-w-[${value}]`;
+        } else {
+          throw new Error(`Unsupported Image optimizer style attribute: ${attr}=${value}`);
+        }
+        break;
+
+      case 'max-height':
+        if (value === '100%') {
+          addClass = 'max-h-full';
+        } else if (value.endsWith('px')) {
+          addClass = `max-h-[${value}]`;
+        } else {
+          throw new Error(`Unsupported Image optimizer style attribute: ${attr}=${value}`);
+        }
+        break;
+
+      case 'aspect-ratio':
+        if (value === '1') {
+          addClass = 'aspect-square';
+        } else if (value.startsWith('1.77')) {
+          addClass = 'aspect-video';
+        } else {
+          addClass = `aspect-[${value}]`;
+        }
+        break;
+
+      default:
+        throw new Error(`Unsupported Image optimizer style attribute: ${attr}=${value}`);
+    }
+
+    if (addClass) {
+      //console.debug(`Converting Image optimization style attribute to class: ${attr}=${value} -> ${addClass}`);
+
+      image.attributes.class = `${image?.attributes.class} ${addClass}`;
+    }
+  }
+}
+
+delete image?.attributes.style;
+---
+
+{
+  !image ? (
+    <Fragment />
+  ) : (
+    <img src={image.src} crossorigin="anonymous" referrerpolicy="no-referrer" {...image.attributes} />
+  )
+}

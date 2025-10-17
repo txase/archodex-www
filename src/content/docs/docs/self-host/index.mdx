@@ -1,0 +1,128 @@
+---
+title: Self-Host
+description: Documentation on self-hosting the Archodex service
+sidebar:
+  order: 5
+---
+
+import { Image } from 'astro:assets';
+import { Aside } from '@astrojs/starlight/components';
+
+import SelfHosted from './self-hosted.svg';
+
+---
+
+The Archodex Service can be self-hosted on-prem or in cloud environments for full control over where your data lives and
+how it is accessed.
+
+## How it Works
+
+The Archodex Service is easy to run using our
+[archodex-backend container images](https://github.com/Archodex/archodex-backend/pkgs/container/archodex-backend). The
+backend service stores its state in an embedded on-disk database by default (with options to scale to a distributed
+database configuration as needed).
+
+Once your self-hosted Archodex Service is running you can register it with the global archodex.com service. This enables
+you to login to the global Archodex Dashboard (https://app.archodex.com) which then will send requests directly to your
+self-hosted backend. When using a self-hosted Archodex Service, the only data stored in the global archodex.com service
+is your user authentication record and the location of your self-hosted Archodex Service.
+
+<div className="flex flex-col items-center">
+  <Image src={SelfHosted} alt="Example Self-Hosted Architecture" />
+  <i>Example Self-Hosted Architecture</i>
+</div>
+
+## Running the Archodex Backend
+
+The Archodex Backend can be run as a Docker Container, which is an easy way to try self-hosting:
+
+```sh
+docker run --rm -it -p 5732:5732 -v ./db:/db ghcr.io/archodex/archodex-backend:latest
+```
+
+This will run the Archodex Backend on port 5732 and persist its database files in the `./db` folder.
+
+## Creating a Self-Hosted Account
+
+Next we need to create a new account for your self-hosted Archodex Service. Start by logging into the
+[Archodex Dashboard](https://app.archodex.com). If you don't already have an account you will be presented with the
+_Create Archodex Account_ form. If you already have an account, click on the _Account Switcher_ on the left sidebar
+under the Archodex logo and select _New Account_.
+
+In the _Create Archodex Account_ form select the _Self-Hosted Account_ option. Then provide the location of your
+self-hosted Archodex Backend. If you followed the above instructions to run the Archodex Backend locally as a Docker
+Container, you should enter **http://<span />localhost:5732**. Then click _Create Account_.
+
+This will create a record of your self-hosted account in the global Archodex accounts so the Dashboard knows where your
+self-hosted backend lives. Now, whenever you login to the Dashboard and select this account it will know to query your
+backend running at the endpoint you provided when creating the account.
+
+## Creating a Report API Key
+
+Just as when using a managed archodex.com account, our next step is to create a Report API Key. This key will be used by
+the Archodex Agent to authenticate with your self-hosted Archodex Service.
+
+To create a Report API Key, navigate to the _Account Settings_ section in the Archodex Dashboard for your self-hosted
+account (if you're not already there). Click on the _Create New API Key_ button. Give your API key a name and click
+_Create_. Make sure to copy the generated API key, as you will need it in the next step.
+
+## Sending Agent Reports
+
+When using a self-hosted Archodex Service you will need to tell the Archodex Agent where to send observation reports to.
+This can be accomplished by running with the `-s` / `--service-endpoint` argument or using the
+`ARCHODEX_SERVICE_ENDPOINT` environment variable. The following example shows how to run the Archodex Agent in a local
+Docker Container and send reports to the Archodex Backend we launched in another Docker Container above:
+
+```sh
+docker run --rm -it \
+  --pid host --cap-add BPF --cap-add PERFMON --cap-add SYS_PTRACE \
+  ghcr.io/archodex/archodex-agent:latest network \
+  --service-endpoint http://172.17.0.1:5732 \
+  --report-api-key <Report API Key>
+```
+
+## Production Usage
+
+### Database
+
+Archodex uses [SurrealDB](https://surrealdb.com/) for its graph database. SurrealDB can be thought of as a graph query
+processing unit with swappable key-value store (KVS) engine to hold records. In the hosted Archodex.com Service each
+customer account is provisioned an independent SurrealDB database. For self-hosted Archodex Services you only need a
+single SurrealDB database for the backend to use.
+
+To make it easy to get up and running with Archodex the backend defaults to using a local directory for the database
+(`/db` in our published Docker / OCI Images, `./db` when run locally). This is a convenient way to try self-hosting an
+Archodex account, but we _**strongly recommend**_ against using this approach in production.
+
+In production we recommend using [Surreal Cloud](https://surrealdb.com/cloud), which provides managed SurrealDB
+databases as a service. You may also choose instead to host your own SurrealDB server (see the SurrealDB docs
+[here](https://surrealdb.com/docs/surrealdb/introduction)). The Archodex Backend uses the following environment
+variables to connect to the SurrealDB database:
+
+- `SURREALDB_URL`: The SurrealDB connection URL string, e.g. _wss://archodex-0cdecs4v5b75pns.aws-use1.surreal.cloud_
+- `SURREALDB_USERNAME`: The SurrealDB username (optional, required if using authentication)
+- `SURREALDB_PASSWORD`: The SurrealDB password (optional, required if using authentication)
+
+### Compute
+
+The Archodex Backend is a stateless Rust service. You should only need to run one instance of the backend service, but
+it can scale horizontally if needed.
+
+### Authentication
+
+All user authentication occurs through the global auth.archodex.com service. Both our managed archodex.com service and
+self-hosted services validate JWT access tokens from the auth.archodex.com service. This provides a consistent and
+secure authentication experience across all Archodex accounts, and simplifies self-hosting configuration.
+
+API keys contain both encrypted and signed information. By default, a private key is generated when self-hosted accounts
+are created, and this key is stored in the database. In your production environment you may have more secure mechanisms
+for generating and maintaining key material, such as hardware security modules (HSMs) or cloud-based key management
+services (KMSs). Instead of generating the private key and storing it in the database you can provide a 16-byte
+hex-encoded private key value through the `ARCHODEX_PRIVATE_API_KEY` environment variable. This must be set before you
+create an account in your self-hosted Archodex Service, and must continue to be provided each time the service is run.
+
+### Helm Chart
+
+We publish a Helm Chart to make it easier to deploy and manage a self-hosted Archodex Service.
+
+TODO...

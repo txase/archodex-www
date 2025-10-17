@@ -1,0 +1,85 @@
+name: GitHub Actions
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  ACT: false
+  AWS_PAGER: ''
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.ARCHODEX_WWW_AWS_ROLE_ARN }}
+          aws-region: 'us-west-2'
+          mask-aws-account-id: true
+          role-chaining: env.ACT == 'true'
+
+      - name: Install AWS CLI v2
+        run: |-
+          echo "Installing AWS CLI v2"
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o /tmp/awscliv2.zip
+          unzip -q /tmp/awscliv2.zip -d /tmp
+          rm /tmp/awscliv2.zip
+          sudo /tmp/aws/install --update
+          rm -rf /tmp/aws/
+          aws --version
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Determine Archodex domain
+        run: |-
+          PUBLIC_ARCHODEX_DOMAIN=$(aws ssm get-parameter --name /account_subdomain/domain --query Parameter.Value --output text)
+
+          if [ "${PUBLIC_ARCHODEX_DOMAIN}" != "archodex.com" ]; then
+            echo "::add-mask::${PUBLIC_ARCHODEX_DOMAIN}"
+          fi
+
+          echo "Archodex domain: ${PUBLIC_ARCHODEX_DOMAIN}"
+          echo "PUBLIC_ARCHODEX_DOMAIN=${PUBLIC_ARCHODEX_DOMAIN}" >> $GITHUB_ENV
+
+      - name: Build site
+        run: npm run build
+
+      - name: Setup robots.txt
+        run: |-
+          if [ "${PUBLIC_ARCHODEX_DOMAIN}" == "archodex.com" ]; then
+            sed -e 's/Disallow/Allow/' dist/robots.txt > /tmp/robots.txt
+          else
+            sed -e 's/Allow/Disallow/' dist/robots.txt > /tmp/robots.txt
+          fi
+
+          mv /tmp/robots.txt dist/robots.txt
+
+      - name: Sync assets to S3
+        run: |-
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+
+          aws s3 sync --exclude '*' --include 'assets/*'  --delete --size-only dist/ s3://archodex-www-assets-${ACCOUNT_ID}/
+          aws s3 sync --exclude 'assets/*' --delete dist/ s3://archodex-www-assets-${ACCOUNT_ID}/

@@ -1,0 +1,16 @@
+---
+import { GoogleAnalytics } from '@astrolib/analytics';
+import PostHog from '../PostHog.astro';
+---
+
+{
+  import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID ? (
+    <GoogleAnalytics id={String(import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID)} partytown />
+  ) : null
+}
+
+{
+  import.meta.env.PUBLIC_POSTHOG_PROJECT_API_KEY ? (
+    <PostHog projectApiKey={import.meta.env.PUBLIC_POSTHOG_PROJECT_API_KEY} />
+  ) : null
+}
