@@ -84,14 +84,6 @@ const principalsTextWidth = '12ch';
 
   <Hero>
     <Fragment slot="title">
-      <style>
-        .hero-img::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-        }
-      </style>
-
       <div class="overlay md:min-h-[400px]">
         <div class="md:top-[50%] md:translate-y-[-50%] md:pr-[180px] text-left text-5xl md:absolute z-10">
           A Platform Engineer's Safety Net
@@ -107,8 +99,8 @@ const principalsTextWidth = '12ch';
           </span>
         </div>
 
-        <div class="hero-img relative hidden md:block">
-          <Image src={heroImage} alt="Part of a graph of relationships between resources" class="hero-img -z-10" />
+        <div class="hidden md:block">
+          <Image src={heroImage} alt="Part of a graph of relationships between resources" class="w-full" />
         </div>
       </div>
     </Fragment>
