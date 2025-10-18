@@ -44,7 +44,13 @@ export const headerData: HeaderData = {
 
 export const footerData: FooterData = {
   links: [
-    { text: 'Product', links: [{ text: 'Pricing', href: '/pricing' }] },
+    {
+      text: 'Product',
+      links: [
+        { text: 'Secrets Observability', href: getPermalink('/product/secrets') },
+        { text: 'Pricing', href: getPermalink('/pricing') },
+      ],
+    },
     {
       text: 'Company',
       links: [
