@@ -46,14 +46,6 @@ const {
       <div class="md:basis-1/2 self-center">
         {content && <div class="mb-12 text-lg" set:html={content} />}
 
-        {
-          callToAction && (
-            <div class="mt-[-40px] mb-8 text-primary">
-              <Button variant="link" {...callToAction} />
-            </div>
-          )
-        }
-
         <ItemGrid
           items={items}
           columns={columns}
@@ -94,4 +86,12 @@ const {
       </div>
     </div>
   </div>
+
+  {
+    callToAction && (
+      <div class="w-full flex justify-center">
+        <Button variant="link" class="px-2.5 py-1" {...callToAction} />
+      </div>
+    )
+  }
 </WidgetWrapper>
