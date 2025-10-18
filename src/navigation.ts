@@ -3,6 +3,7 @@ import { getPermalink } from './utils/permalinks';
 
 export const headerData: HeaderData = {
   links: [
+    { text: 'Product', links: [{ text: 'Secrets Observability', href: getPermalink('/product/secrets') }] },
     {
       text: 'Community',
       links: [
