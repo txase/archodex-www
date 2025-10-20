@@ -3,7 +3,14 @@ import { getPermalink } from './utils/permalinks';
 
 export const headerData: HeaderData = {
   links: [
-    { text: 'Product', links: [{ text: 'Secrets Observability', href: getPermalink('/product/secrets') }] },
+    {
+      text: 'Product',
+      links: [
+        { text: 'Secrets Observability', href: getPermalink('/product/secrets') },
+        { text: 'eBPF Sensor', href: getPermalink('/product/ebpf') },
+        { text: 'Hosting Options', href: getPermalink('/product/hosting-options') },
+      ],
+    },
     {
       text: 'Community',
       links: [
@@ -53,6 +60,8 @@ export const footerData: FooterData = {
       text: 'Product',
       links: [
         { text: 'Secrets Observability', href: getPermalink('/product/secrets') },
+        { text: 'eBPF Sensor', href: getPermalink('/product/ebpf') },
+        { text: 'Hosting Options', href: getPermalink('/product/hosting-options') },
         { text: 'Pricing', href: getPermalink('/pricing') },
       ],
     },
