@@ -35,9 +35,14 @@ export const headerData: HeaderData = {
     { text: 'Docs', href: getPermalink('/docs') },
   ],
   actions: [
-    { variant: 'link', text: 'Login', href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}` },
-    { text: 'Playground', href: `https://play.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}` },
-    { variant: 'primary', text: 'Start Free', href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}/signup` },
+    { variant: 'link', text: 'Login', href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}`, target: '_blank' },
+    { text: 'Playground', href: `https://play.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}`, target: '_blank' },
+    {
+      variant: 'primary',
+      text: 'Start Free',
+      href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}/signup`,
+      target: '_blank',
+    },
   ],
   position: 'left',
 };
