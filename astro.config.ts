@@ -46,6 +46,7 @@ export default defineConfig({
           'business-contact',
           'database',
         ],
+        'simple-icons': ['*'],
       },
     }),
 
