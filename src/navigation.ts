@@ -34,9 +34,9 @@ export const headerData: HeaderData = {
     { text: 'Team', href: getPermalink('/team') },
     { text: 'Pricing', href: getPermalink('/pricing') },
     { text: 'Docs', href: getPermalink('/docs') },
+    { text: 'Login', href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}` },
   ],
   actions: [
-    { variant: 'link', text: 'Login', href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}`, target: '_blank' },
     { text: 'Playground', href: `https://play.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}`, target: '_blank' },
     {
       variant: 'primary',
