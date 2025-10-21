@@ -4,7 +4,7 @@ import { getPermalink } from './utils/permalinks';
 export const headerData: HeaderData = {
   links: [
     {
-      text: 'Product',
+      text: 'Project',
       links: [
         { text: 'Secrets Observability', href: getPermalink('/product/secrets') },
         { text: 'eBPF Sensor', href: getPermalink('/product/ebpf') },
@@ -31,13 +31,7 @@ export const headerData: HeaderData = {
         { text: 'Fair Source', href: getPermalink('/licensing') },
       ],
     },
-    {
-      text: 'Company',
-      links: [
-        { text: 'Team', href: getPermalink('/team') },
-        { text: 'Contact', href: getPermalink('/contact') },
-      ],
-    },
+    { text: 'Team', href: getPermalink('/team') },
     { text: 'Pricing', href: getPermalink('/pricing') },
     { text: 'Docs', href: getPermalink('/docs') },
   ],
@@ -46,7 +40,7 @@ export const headerData: HeaderData = {
     { text: 'Playground', href: `https://play.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}`, target: '_blank' },
     {
       variant: 'primary',
-      text: 'Start Free',
+      text: 'Get Started',
       href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}/signup`,
       target: '_blank',
     },
@@ -57,19 +51,12 @@ export const headerData: HeaderData = {
 export const footerData: FooterData = {
   links: [
     {
-      text: 'Product',
+      text: 'Project',
       links: [
         { text: 'Secrets Observability', href: getPermalink('/product/secrets') },
         { text: 'eBPF Sensor', href: getPermalink('/product/ebpf') },
         { text: 'Hosting Options', href: getPermalink('/product/hosting-options') },
         { text: 'Pricing', href: getPermalink('/pricing') },
-      ],
-    },
-    {
-      text: 'Company',
-      links: [
-        { text: 'Team', href: getPermalink('/team') },
-        { text: 'Contact', href: getPermalink('/contact') },
       ],
     },
     {
@@ -90,6 +77,13 @@ export const footerData: FooterData = {
         },
         { text: 'Contributing', href: getPermalink('/contributing') },
         { text: 'Licensing', href: getPermalink('/licensing') },
+      ],
+    },
+    {
+      text: 'About Us',
+      links: [
+        { text: 'Team', href: getPermalink('/team') },
+        { text: 'Contact', href: getPermalink('/contact') },
       ],
     },
   ],
