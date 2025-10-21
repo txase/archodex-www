@@ -1,0 +1,98 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero2 from '~/components/widgets/Hero2.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = { title: 'Hosting Options' };
+---
+
+<Layout metadata={metadata}>
+  <Hero2
+    title="Flexible Hosting Options"
+    subtitle="Choose the deployment model that meets your data sovereignty and access requirements."
+  />
+
+  <Features2
+    title="Managed Archodex.com Accounts"
+    subtitle="Ease of use with data locality built-in"
+    items={[
+      {
+        title: 'Serverless Infrastructure & Pricing',
+        description:
+          'Managed Archodex.com accounts offer a great free-tier experience for small teams and scales with your growth.',
+        icon: 'tabler:cloud-computing',
+      },
+      {
+        title: 'Built-in Data Locality Options',
+        description:
+          'Choose among many geographic regions to process and store your data. Your data will never be processed or stored outside your chosen region.',
+        icon: 'tabler:world',
+      },
+      {
+        title: 'Security & Confidentiality',
+        description: 'Every account receives an isolated database, and all data is encrypted at rest and in transit.',
+        icon: 'tabler:shield-lock',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-primary/5 dark:bg-transparent"></div>
+    </Fragment>
+  </Features2>
+
+  <Features2
+    title="Self-Hosted Accounts"
+    subtitle="Full control over your data and infrastructure"
+    items={[
+      {
+        title: 'Easy Deployment',
+        description: 'We publish the Archodex Service as a container image, making it easy to deploy anywhere.',
+        icon: 'simple-icons:docker',
+      },
+      {
+        title: 'Regulatory Compliance',
+        description: 'Archodex can be easily deployed to meet common compliance requirements.',
+        icon: 'tabler:shield-check',
+      },
+      {
+        title: 'Isolation',
+        description: 'Archodex can process and store data anywhere, including in air-gapped on-prem environments.',
+        icon: 'tabler:building-fortress',
+      },
+    ]}
+  />
+
+  <Features2
+    title="Managed Bring-Your-Own-Cloud Accounts"
+    subtitle="Allow us to deploy and manage Archodex in your cloud environment."
+    items={[
+      {
+        title: 'Ease of Operations',
+        description: 'The ease of managed Archodex.com accounts, but under your full control and visibility.',
+        icon: 'tabler:cloud-computing',
+      },
+      {
+        title: 'Enhanced Support',
+        description: 'We work side by side with you to solve any issues that arise.',
+        icon: 'tabler:headset',
+      },
+      {
+        title: 'Easy Procurement',
+        description:
+          'Archodex works with your cloud provider to invoice and/or charge through your existing relationship with them.',
+        icon: 'tabler:currency-dollar',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-primary/5 dark:bg-transparent"></div>
+    </Fragment>
+  </Features2>
+
+  <CallToAction
+    actions={[{ variant: 'primary', text: 'Inquire About Hosting Options', href: `/contact/custom-pricing` }]}
+  >
+    <Fragment slot="title"> Solve Your DevSecOps Challenges Today </Fragment>
+  </CallToAction>
+</Layout>
