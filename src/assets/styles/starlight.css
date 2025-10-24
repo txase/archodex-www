@@ -9,6 +9,7 @@
 html {
   --sl-content-width: 100%;
   --sl-sidebar-width: 20rem;
+  --sl-color-text: black;
   --sl-color-hairline: var(--sl-color-accent);
 
   *:focus-visible {
@@ -43,6 +44,7 @@ html {
 
 html[data-theme='dark'] {
   --sl-color-black: black;
+  --sl-color-text: white;
   --sl-color-bg: black;
   --sl-color-bg-nav: black;
   --sl-color-bg-sidebar: black;
