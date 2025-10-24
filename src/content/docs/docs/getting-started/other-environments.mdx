@@ -1,0 +1,43 @@
+---
+title: Other Environments
+description: Documentation on instrumenting generic environments with the Archodex Agent
+sidebar:
+  order: 5
+---
+
+The Archodex Agent can be used to monitor workloads in any environment where [eBPF](https://ebpf.io/) is available and
+you can run a container.
+
+For example, you might have a workload running on a GCP Managed Instance Group or an AWS ECS Cluster. The Archodex Agent
+container image can be run on each VM instance to observe workload activity.
+
+Or maybe you want to kick the tires on your laptop before deploying it out to workloads. You can run the Archodex Agent
+as a docker container to monitor workloads running in your local Docker host.
+
+## Running the Archodex Agent as a Docker Container
+
+To observe activity on the host machine using the docker CLI:
+
+```sh
+docker run --rm -it \
+  --cap-add BPF --cap-add PERFMON --cap-add SYS_PTRACE --pid host \
+  ghcr.io/archodex/archodex-agent:latest network --report-api-key <your_api_key>
+```
+
+A brief explanation of these options:
+
+- `--rm`: Automatically delete the container when it exits
+- `-it`: Run the container in interactive mode so we can see logged output and stop it with _Ctrl-C_
+- `--cap-add BPF --cap-add PERFMON --cap-add SYS_PTRACE`: Add the required Linux capabilities for eBPF tracing
+- `--pid host`: Use the host's process ID (PID) namespace with the container so the agent can match processes to network
+  sockets
+
+If you provided the `--report-api-key` argument, observations will be sent to your Archodex account 20 seconds after
+agent startup and then once per reporting period (e.g. once per hour for free-tier accounts). The agent container will
+send one final report when the pod terminates.
+
+If you omit the `--report-api-key` argument, the Archodex Agent will run in log-only mode and will not report
+observations to the Archodex service.
+
+Adapt the above command options as needed for your environment (e.g. to run it on AWS ECS Cluster instances using the
+[Daemon Scheduling Strategy](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_service-options.html#service_scheduler_daemon)).

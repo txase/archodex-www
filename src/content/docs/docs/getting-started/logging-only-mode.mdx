@@ -1,0 +1,85 @@
+---
+title: Logging-Only Mode
+description: Guide to using the Archodex Agent in logging-only mode
+sidebar:
+  order: 6
+---
+
+import { Aside, LinkCard, Steps } from '@astrojs/starlight/components';
+
+---
+
+The Archodex Agent can be run in _logging-only_ mode, where it observes service interactions and logs them to standard
+out. This mode is useful for trying Archodex, even before creating an account. You can also use logging-only mode to
+forward observations to a destination of your choice.
+
+<Aside title="Limits">
+  The Archodex Agent will only observe a limited amount of interactions per hour when run without a Report API Key.
+  Higher limits are available when using a Report API Key from free-tier and paid accounts.
+</Aside>
+
+## Example Output
+
+The following shows log output from an example project's GitHub Actions Workflow run:
+
+```ansi title="Post Archodex Agent" wrap
+ [1mResource captures:[0m
+ ├─ [1mType:[0m [34mGitHub Service[0m
+ │  [1mID:[0m [36mhttps://github.com[0m
+ │  [1mFirst seen at:[0m 2025-01-28 23:25:36 UTC
+ │  [1mLast seen at:[0m 2025-01-28 23:25:36 UTC
+ │  │
+ │  ├─ [1mType:[0m [34mActor[0m
+ │  │  [1mID:[0m [36mtxase[0m
+ │  │  [1mFirst seen at:[0m 2025-01-28 23:25:36 UTC
+ │  │  [1mLast seen at:[0m 2025-01-28 23:25:36 UTC
+ │  │
+ │  └─ [1mType:[0m [34mOrganization[0m
+ │     [1mID:[0m [36marchodex[0m
+ │     [1mFirst seen at:[0m 2025-01-28 23:25:36 UTC
+ │     [1mLast seen at:[0m 2025-01-28 23:25:36 UTC
+ │     │
+ │     └─ [1mType:[0m [34mGit Repository[0m
+ │        [1mID:[0m [36marchodex/archodex-demo-sprockets[0m
+ │        [1mFirst seen at:[0m 2025-01-28 23:25:36 UTC
+ │        [1mLast seen at:[0m 2025-01-28 23:25:36 UTC
+ │        │
+ │        └─ [1mType:[0m [34mGitHub Actions Workflow[0m
+ │           [1mID:[0m [36marchodex/archodex-demo-sprockets/.github/workflows/deploy.yml@refs/heads/main[0m
+ │           [1mFirst seen at:[0m 2025-01-28 23:25:36 UTC
+ │           [1mLast seen at:[0m 2025-01-28 23:25:36 UTC
+ │
+ └─ [1mType:[0m [34mHashiCorp Vault Service[0m
+    [1mID:[0m [36mvault.demo.com[0m
+    [1mFirst seen at:[0m 2025-01-28 23:25:55 UTC
+    [1mLast seen at:[0m 2025-01-28 23:25:55 UTC
+    │
+    └─ [1mType:[0m [34mSecrets Engine Mount[0m
+       [1mID:[0m [36mvault[0m
+       [1mFirst seen at:[0m 2025-01-28 23:25:55 UTC
+       [1mLast seen at:[0m 2025-01-28 23:25:55 UTC
+       │
+       └─ [1mType:[0m [34mSecret[0m
+          [1mID:[0m [36mprod/db_creds[0m
+          [1mFirst seen at:[0m 2025-01-28 23:25:55 UTC
+          [1mLast seen at:[0m 2025-01-28 23:25:55 UTC
+
+ [1mEvent captures:[0m
+ ├─ [1mPrincipal chain:[0m [[34mGitHub Service[0m::[36mhttps://github.com[0m]::[[34mActor[0m::[36mtxase[0m]
+ │  └─ [1mEvent:[0m [33mAssumed[0m
+ │     [1mResource:[0m [[34mGitHub Service[0m::[36mhttps://github.com[0m]::[[34mActor[0m::[36mtxase[0m]
+ │     [1mFirst seen at:[0m 2025-01-28 23:25:36 UTC
+ │     [1mLast seen at:[0m 2025-01-28 23:25:36 UTC
+ │
+ ├─ [1mPrincipal chain:[0m [[34mGitHub Service[0m::[36mhttps://github.com[0m]::[[34mActor[0m::[36mtxase[0m] [33m-(Assumed)->[0m [[34mGitHub Service[0m::[36mhttps://github.com[0m]::[[34mActor[0m::[36mtxase[0m]
+ │  └─ [1mEvent:[0m [33mInvoked[0m
+ │     [1mResource:[0m [[34mGitHub Service[0m::[36mhttps://github.com[0m]::[[34mOrganization[0m::[36marchodex[0m]::[[34mGit Repository[0m::[36marchodex/archodex-demo-sprockets[0m]::[[34mGitHub Actions Workflow[0m::[36marchodex/archodex-demo-sprockets/.github/workflows/deploy.yml@refs/heads/main[0m]
+ │     [1mFirst seen at:[0m 2025-01-28 23:25:36 UTC
+ │     [1mLast seen at:[0m 2025-01-28 23:25:36 UTC
+ │
+ └─ [1mPrincipal chain:[0m [[34mGitHub Service[0m::[36mhttps://github.com[0m]::[[34mActor[0m::[36mtxase[0m] [33m-(Assumed)->[0m [[34mGitHub Service[0m::[36mhttps://github.com[0m]::[[34mActor[0m::[36mtxase[0m] [33m-(Invoked)->[0m [[34mGitHub Service[0m::[36mhttps://github.com[0m]::[[34mOrganization[0m::[36marchodex[0m]::[[34mGit Repository[0m::[36marchodex/archodex-demo-sprockets[0m]::[[34mGitHub Actions Workflow[0m::[36marchodex/archodex-demo-sprockets/.github/workflows/deploy.yml@refs/heads/main[0m]
+    └─ [1mEvent:[0m [33mRead[0m
+       [1mResource:[0m [[34mHashiCorp Vault Service[0m::[36mvault.example.com[0m]::[[34mSecrets Engine Mount[0m::[36mvault[0m]::[[34mSecret[0m::[36mprod/db_creds[0m]
+       [1mFirst seen at:[0m 2025-01-28 23:25:55 UTC
+       [1mLast seen at:[0m 2025-01-28 23:25:55 UTC
+```

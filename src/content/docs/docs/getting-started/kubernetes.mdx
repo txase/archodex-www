@@ -1,0 +1,117 @@
+---
+title: Kubernetes Workloads
+description: Documentation on instrumenting Kubernetes workloads with the Archodex Agent
+sidebar:
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+---
+
+Archodex makes it easy to observe individual workloads or an entire Kubernetes cluster.
+
+## Cluster vs Workload Scope
+
+Observing all workloads on a cluster provides the most operational insights. However, the Archodex Agent can be used to
+observe individual workloads if:
+
+- You want to try Archodex on a limited set of workloads before deploying more widely
+- You have access to modify workload configurations but not cluster configurations
+
+## Observing Clusters
+
+Observing entire Kubernetes Clusters ensures the Archodex Agent captures all interactions between your workloads and
+services. Archodex provides a [Helm Chart](https://helm.sh/) to simplify installation. The chart ensures an Archodex
+Agent container runs on each Kubernetes Node.
+
+- **Chart Repository:** `https://helm.archodex.com`
+- **Chart Name:** `archodex-agent`
+- **Values:**
+  - **`reportApiKey`:** (Optional) The Archodex Report API Key value. When provided, the agent containers will report
+    observations periodically to your Archodex account.
+  - **`serviceEndpoint`:** (Optional) The Archodex Service Endpoint URL. Set this value to the location agent containers
+    will send reports to when self-hosting. It must be resolvable within the cluster.
+  - **`logReport`:** (Optional) Set to `'false'` to disable logging observations to agent container logs.
+
+If you provided an Archodex Report API Key, observations will be logged and sent to your Archodex account 20 seconds
+after agent startup and then once per reporting period (e.g. once per hour for free-tier accounts). The agent container
+will send one final report when the pod terminates.
+
+### Example Installation
+
+To install the Archodex Agent helm chart in your cluster using the helm CLI, first
+[install helm on your local machine](https://helm.sh/docs/intro/install/), then run the following commands:
+
+```sh
+$ helm repo add archodex https://helm.archodex.com
+$ helm install archodex-agent --set reportApiKey=<reportApiKey>
+```
+
+## Observing Individual Workloads
+
+Individual workloads can be instrumented at the [Kubernetes Pod](https://kubernetes.io/docs/concepts/workloads/pods/)
+level. The Archodex Agent runs as a
+[Sidecar Container](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/). Because Pods are the
+compute unit for both long-running workloads (e.g.
+[Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)) and one-off tasks (e.g.
+[Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/)), both workload types can be instrumented by
+adding the Archodex Agent as a Pod Sidecar.
+
+To instrument a workload, add a sidecar container configuration as shown in the following example:
+
+```diff lang="yaml"
+ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: myapp
+   labels:
+     app: myapp
+ spec:
+   selector:
+     matchLabels:
+       app: myapp
+   template:
+     metadata:
+       labels:
+         app: myapp
+     spec:
+       containers:
+         ...
+         <your existing containers spec>
+         ...
++
++      # Required for archodex-agent sidecar container to observe your container processes
++      hostPID: true
++
++      # Archodex Agent sidecar container
++      initContainers:
++        - name: archodex-agent
++          image: ghcr.io/archodex/archodex-agent:latest
++          restartPolicy: Always
++          securityContext:
++            capabilities:
++              add:
++                - BPF
++                - PERFMON
++                - SYS_PTRACE
++          env:
++            # Required: Informs agent which Kubernetes node it is running on
++            - name: KUBERNETES_NODE_NAME
++              valueFrom:
++                fieldRef:
++                  fieldPath: spec.nodeName
++            # Optional: If omitted the agent will only log observations
++            - name: ARCHODEX_REPORT_API_KEY
++              value: <report API key>
+```
+
+<Aside>
+  If your workload already has init containers, adding the Archodex Agent container at the beginning of the list will
+  enable it to observe service interactions performed in later init containers.
+</Aside>
+
+Once the workload is running, you can view service interaction observations from the pod's archodex-agent container
+logs. If you provided a value for the `ARCHODEX_REPORT_API_KEY` environment variable, observations will be logged and
+sent to your Archodex account 20 seconds after agent startup and then once per reporting period (e.g. once per hour for
+free-tier accounts). The agent container will send one final report when the pod terminates.

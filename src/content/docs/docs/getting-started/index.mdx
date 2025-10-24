@@ -1,0 +1,108 @@
+---
+title: Getting Started
+description: Getting started with Archodex
+sidebar:
+  order: 3
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+import Screenshot from '~/components/ui/Screenshot.astro';
+
+import CreateAccountLight from './create-account-light.png';
+import CreateAccountDark from './create-account-dark.png';
+import CreateManagedAccountLight from './create-managed-account-light.png';
+import CreateManagedAccountDark from './create-managed-account-dark.png';
+
+---
+
+Archodex provides detailed operational intelligence based on your service interactions that go beyond existing
+observability solutions. The Archodex Agent utilizes [eBPF](https://ebpf.io/) to safely and efficiently observe, filter,
+and record details of all network traffic, even when encrypted. The Agent uses Archodex Rulesets to determine which
+network traffic to observe and what data on infrastructure resources and events to pull from the traffic.
+
+The Archodex Agent can also pull information about resources in your environment. For example, it can query for GitHub
+Secret Scan results to correlate hardcoded secrets with observed service interactions.
+
+<Aside title="Data Confidentiality">
+  <p>
+    Your first question before stepping further may be: What does Archodex do with confidential information it has
+    observed?
+  </p>
+  <p>
+    1. **By default the Archodex Agent doesn't send data anywhere.** The Archodex Agent will simply record observations
+    and log them as output unless you provide a Report API Key. You can even run the agent while firewalled off from
+    network access to ensure confidential data never leaves your environment. You are in full control.
+  </p>
+  <p>
+    2. **The Archodex Agent securely sends observations to the Archodex backend service.** Observations are encrypted in
+    transit using TLS 1.3 and stored encrypted at rest. The Archodex Service implements strict access controls to ensure
+    only authorized users can access your data. When using an Archodex.com managed account your data is stored in an
+    isolated database in a locality of your choice. You can also self-host the Archodex Service to have full control
+    over where your data lives and how it can be accessed.
+  </p>
+  <p>
+    3. **Secret values are never transmitted or stored.** The Archodex Agent cryptographically hashes observed secret
+    values, like API keys, using account-specific salt values. This ensures your secret values are never transmitted,
+    while still allowing the Archodex Service to correlate observed secret usage across workloads.
+  </p>
+</Aside>
+
+## User Account
+
+To get started with Archodex, first create a free user account at https://app.archodex.com/signup. This user account can
+be used to access one or more Archodex accounts. It is similar to how you can login to GitHub with a user account and
+then create personal repositories and/or access one or more GitHub organizations.
+
+## Create an Archodex Account
+
+Next, create an Archodex account by following the prompts in the Archodex Dashboard after creating your new user
+account. Later on, you can create additional Archodex accounts by clicking on the Account Switcher in the left sidebar
+under the Archodex logo and selecting _New Account_, or by navigating to https://app.archodex.com/create_account.
+
+<Screenshot alt="Screenshot of account switcher" src={CreateAccountLight} srcDark={CreateAccountDark} />
+
+An Archodex account represents an individual, organization, or team using Archodex.
+
+<Aside title="Account Scoping">
+  Workloads and resources are scoped to individual Archodex accounts. This means that Archodex cannot detect
+  correlations, like when a workload uses a secret value that is also hardcoded in a source file, when observations are
+  reported into separate accounts.
+</Aside>
+
+### Account Types
+
+When creating an account you can choose between the following two options:
+
+- **Managed Account**: A managed Archodex.com account where we process and store your data in an isolated and encrypted
+  database in a locality of your choice.
+- **Self-Hosted Account**: A self-hosted Archodex account where you run your own Archodex Service to have full control
+  over where your data lives and how it is accessed. See the [Self-Host](./self-host) documentation for instructions on
+  running your own Archodex Service.
+
+## Create a Report API Key
+
+After creating a new account you will be prompted to report in observations using the Archodex Agent. You'll need a
+Report API Key, which the dashboard will suggest creating. You can also create and manage Report API Keys in the
+_Account Settings_ page.
+
+## Using the Agent
+
+The Archodex Agent is easy to use in a variety of environments. Choose one of the options below to get started:
+
+<CardGrid>
+  <LinkCard
+    title="Kubernetes"
+    description="Easily install the Archodex Agent in Kubernetes Pods or across an entire Cluster"
+    href="getting-started/kubernetes"
+  />
+  <LinkCard
+    title="CI/CD Workflows"
+    description="Easily install the Archodex Agent in GitHub Actions Workflows"
+    href="getting-started/ci-cd"
+  />
+  <LinkCard
+    title="Other Environments"
+    description="Easily use the Archodex Agent to observe workloads in other environments"
+    href="getting-started/other-environments"
+  />
+</CardGrid>
