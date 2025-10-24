@@ -1,0 +1,30 @@
+---
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  srcDark: ImageMetadata;
+  alt: string;
+  caption?: string;
+}
+
+const { src, srcDark, alt, caption } = Astro.props as Props;
+---
+
+<div class="flex flex-col items-center my-6">
+  <img
+    src={src.src}
+    alt={alt}
+    class="h-fit m-0 drop-shadow-lg rounded-md dark:hidden"
+    width={src.width / 2}
+    height={src.height / 2}
+  />
+  <img
+    src={srcDark.src}
+    alt={alt}
+    class="h-fit m-0 rounded-md border border-primary/25 hidden dark:block"
+    width={srcDark.width / 2}
+    height={srcDark.height / 2}
+  />
+  {caption && <p class="text-center text-sm text-muted mt-2">{caption}</p>}
+</div>
