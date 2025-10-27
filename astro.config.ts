@@ -18,6 +18,7 @@ import { astroCSPHashGenerator } from './src/utils/csp-hash-generator';
 import react from '@astrojs/react';
 
 import starlight from '@astrojs/starlight';
+import starlightKbd from 'starlight-kbd';
 
 import tailwindcss from '@tailwindcss/vite';
 
@@ -89,6 +90,14 @@ export default defineConfig({
       pagination: false,
       customCss: ['./src/assets/styles/starlight.css'],
       expressiveCode: { themes: ['github-dark', 'github-light'] },
+      plugins: [
+        starlightKbd({
+          types: [
+            { id: 'mac', label: 'macOS', default: true },
+            { id: 'windows', label: 'Windows' },
+          ],
+        }),
+      ],
     }),
 
     mdx(),
