@@ -1,19 +1,291 @@
 ---
-title: Dashboard
+title: Archodex Dashboard
 description: Documentation on the Archodex Dashboard
 sidebar:
   order: 4
 ---
 
-import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+import { CardGrid, Icon, LinkCard } from '@astrojs/starlight/components';
+import { Kbd } from 'starlight-kbd/components';
+import Screenshot from '~/components/ui/Screenshot.astro';
 
----
+import OverviewLight from './overview-light.png';
+import OverviewDark from './overview-dark.png';
+import TableResourcesLight from './table-resources-light.png';
+import TableResourcesDark from './table-resources-dark.png';
+import TableEventsLight from './table-events-light.png';
+import TableEventsDark from './table-events-dark.png';
+import EventDetailsLight from './event-details-light.png';
+import EventDetailsDark from './event-details-dark.png';
+import TableIssuesLight from './table-issues-light.png';
+import TableIssuesDark from './table-issues-dark.png';
+import GraphControlsLight from './graph-controls-light.png';
+import GraphControlsDark from './graph-controls-dark.png';
+import ResourcesLight from './resources-light.png';
+import ResourcesDark from './resources-dark.png';
+import ResourceIcon1Light from './resource-icon-1-light.png';
+import ResourceIcon1Dark from './resource-icon-1-dark.png';
+import ResourceIcon2Light from './resource-icon-2-light.png';
+import ResourceIcon2Dark from './resource-icon-2-dark.png';
+import ResourceIcon3Light from './resource-icon-3-light.png';
+import ResourceIcon3Dark from './resource-icon-3-dark.png';
+import ResourceIcon4Light from './resource-icon-4-light.png';
+import ResourceIcon4Dark from './resource-icon-4-dark.png';
+import ContainerResourceLight from './container-resource-light.png';
+import ContainerResourceDark from './container-resource-dark.png';
+import EventsSelectedLight from './events-selected-light.png';
+import EventsSelectedDark from './events-selected-dark.png';
+import EnvironmentTagsLight from './environment-tags-light.png';
+import EnvironmentTagsDark from './environment-tags-dark.png';
+import EnvironmentAddLight from './environment-add-light.png';
+import EnvironmentAddDark from './environment-add-dark.png';
+import EnvironmentRemoveLight from './environment-remove-light.png';
+import EnvironmentRemoveDark from './environment-remove-dark.png';
+import IssueLight from './issue-light.png';
+import IssueDark from './issue-dark.png';
 
-The Archodex Dashboard makes it easy to get the information you need to get on with your tasks. For example, the
-[Secrets](./secrets) view makes it easy to see which workloads will be impacted if you rotate a secret. The
-[Apps](./apps) view makes it easy to understand the architecture of an application ahead of a refactoring project. And
-the [Environments](./environments) view makes it easy to find single-point-of-failure resources that are shared across
-environments.
+import OverviewMarkers from './OverviewMarkers.json';
+
+The Archodex Dashboard makes it easy to understand workloads, resources, environments, events, and issues. This page
+will walk you through all the major features of the Archodex Dashboard and how to use them to accomplish your DevSecOps
+tasks more quickly and safely.
+
+<Screenshot
+  src={OverviewLight}
+  srcDark={OverviewDark}
+  alt="Screenshot of the Archodex Dashboard"
+  markers={OverviewMarkers}
+/>
+
+## 1. Graph View
+
+The Graph View provides a high-level overview of your applications and their interactions with services. You can use the
+Graph View to quickly identify which workloads are using specific secrets, services, or resources.
+
+Resources can be clicked on to select them and the events they participated in. Multiple resources can be selected when
+holding the <Kbd mac="Command" windows="Windows" /> key and clicking on additional resources.
+
+Selected resources and events will also be selected in the Table View below the graph, making it easy to cross-reference
+selections.
+
+[Back to Overview](#_top)
+
+## 2. Table View
+
+The Table View provides a detailed list of resources, workloads, and events. You can use the Table View to filter and
+search for specific items and drill into their details.
+
+Resources can be selected by checking the box to the left of each row. Multiple resources can be selected when holding
+the <Kbd mac="Command" windows="Windows" /> key and clicking on additional rows.
+
+Selected resources and events will also be selected in the Graph View above, making it easy to cross-reference
+selections.
+
+There are three tabs in the Table View:
+
+### Resources Table
+
+<Screenshot src={TableResourcesLight} srcDark={TableResourcesDark} alt="Screenshot of the Table View Resources tab" />
+
+The Resources tab provides a detailed list of all resources observed by the Archodex Agent within the chosen date range
+along with links to the resource (where applicable) and timestamps of when the resource was first and last observed
+within the date range.
+
+Selecting a resource in the table will also select it in the Graph View above. If the resource is hidden inside
+collapsed parent resources, the parent resources will be expanded. This can help you quickly locate resources of
+interest in the Graph View.
+
+Selecting a resource in the table will also select it and its associated events in the Graph View above. If the resource
+is hidden inside collapsed parent resources, its parent resources will be expanded. This can help you quickly locate
+events of interest in the Graph View.
+
+### Events Table
+
+<Screenshot src={TableEventsLight} srcDark={TableEventsDark} alt="Screenshot of the Table View Events tab" />
+
+The Events tab provides a detailed list of all events observed by the Archodex Agent within the chosen date range along
+with timestamps of when the event was first and last observed within the date range.
+
+Each row represents one direct event that a _Principal_ resource performed on a _Target_ resource. These events may also
+be part of a larger chain of events that make up a higher-level operation, such as a secret retrieval or an API call.
+Clicking on the **Details** button for an event will show more information about it and the other events in the same
+operation.
+
+Selecting an event in the table will also select it and its associated resources in the Graph View above. If the event
+and/or resources are hidden inside collapsed parent resources, the parent resources will be expanded. This can help you
+quickly locate events of interest in the Graph View.
+
+#### Event Details
+
+<Screenshot src={EventDetailsLight} srcDark={EventDetailsDark} alt="Screenshot of Event Details" scale={0.5} />
+
+Clicking on the **Details** button for an event in the Events tab will open the Event Details panel. This panel shows
+more information about the selected event as well as other events that are part of the same higher-level operation. For
+example, in this screenshot we are looking at the detail of a _job_ container that _Used_ a secret value. At the bottom
+of the panel we see in the following event of this operation the secret value was used to _Access_ the Stripe API.
+
+### Issues Table
+
+<Screenshot src={TableIssuesLight} srcDark={TableIssuesDark} alt="Screenshot of the Table View Issues tab" />
+
+The Issues tab provides a detailed list of all issues detected by Archodex within the chosen date range. Each issue is
+described with a message and links (where applicable) to affected resources.
+
+Selecting an issue in the table will also select its associated resources and events in the Graph View above. If the
+resources and/or events are hidden inside collapsed parent resources, the parent resources will be expanded. This can
+help you quickly locate issues of interest in the Graph View.
+
+[Back to Overview](#_top)
+
+## 3. Date Range Selector
+
+The Date Range Selector allows you to filter the data displayed in the Dashboard by a specific time range. You can use
+the Date Range Selector to focus on recent events or to analyze historical data. Only observations of events and
+resources seen within the selected date range will be displayed. This filtering applies to both the Graph View and the
+Table View.
+
+[Back to Overview](#_top)
+
+## 4. Graph Controls
+
+<Screenshot src={GraphControlsLight} srcDark={GraphControlsDark} alt="Screenshot of Graph Controls" />
+
+There can be many resources in the Graph View. The Graph Controls make it easier to navigate and understand the graph.
+
+The + / - buttons allow you to zoom in and out of the graph. The square Fit View button will automatically adjust the
+zoom level to fit all the resources in the view.
+
+The expand and collapse buttons allow you to expand or collapse all resources in the graph. Expanding a resource will
+show all the resources it contains, while collapsing a resource will hide them. These buttons are especially useful when
+working with complex applications that have many nested resources.
+
+[Back to Overview](#_top)
+
+## 5. Resources
+
+<Screenshot
+  src={ResourcesLight}
+  srcDark={ResourcesDark}
+  alt="Screenshot of one Highlighted Resource and one not-Highlighted Resource"
+/>
+
+Resource nodes in the Graph View represent individual resources observed by the Archodex Agent. Resources can be
+workloads, clusters, secrets, API services, etc.
+
+In some views resources of a certain type are highlighted. For example, in these screenshots of the _Secrets_ view all
+_Secret Value_ resources are highlighted.
+
+### Resource Icons
+
+Resources may be part of a hierarchy. When parent resources contain only single child resources the Graph View displays
+them as a single node with icons for each resource in the hierarchy. Hovering over these icons will show a tooltip with
+the names of each resource in the hierarchy.
+
+<div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-2 my-6 *:my-1">
+  <Screenshot
+    src={ResourceIcon1Light}
+    srcDark={ResourceIcon1Dark}
+    alt="Screenshot of a Resource Node with the first Resource Icon tooltip visible"
+  />
+  <Screenshot
+    src={ResourceIcon2Light}
+    srcDark={ResourceIcon2Dark}
+    alt="Screenshot of a Resource Node with the second Resource Icon tooltip visible"
+  />
+  <Screenshot
+    src={ResourceIcon3Light}
+    srcDark={ResourceIcon3Dark}
+    alt="Screenshot of a Resource Node with the third Resource Icon tooltip visible"
+  />
+  <Screenshot
+    src={ResourceIcon4Light}
+    srcDark={ResourceIcon4Dark}
+    alt="Screenshot of a Resource Node with the fourth Resource Icon tooltip visible"
+  />
+</div>
+
+[Back to Overview](#_top)
+
+## 6. Containing Resources
+
+<Screenshot
+  src={ContainerResourceLight}
+  srcDark={ContainerResourceDark}
+  alt="Screenshot of a Container Resource Node expanded to show its child resources"
+/>
+
+Some resources contain multiple child resources in a hierarchy. For example, the Kubernetes Namespace _prod_ shown in
+the above screenshot was observed to contain three workloads. These resources can be expanded and collapsed by clicking
+on the chevron icon to the right of the resource name.
+
+[Back to Overview](#_top)
+
+## 7. Selected Events
+
+<Screenshot
+  src={EventsSelectedLight}
+  srcDark={EventsSelectedDark}
+  alt="Screenshot of selected events in the Graph View"
+/>
+
+When an event is hovered over or clicked on in the Graph View, the event, and other related events in the same
+high-level operation, become highlighted. For example, in the above screenshot we clicked the _Accessed_ event that
+represents a specific Secret Value being used to access the Stripe API, and this automatically selected the events that
+were part of the same high-level operations. In this case, because two different container workloads used the same
+Secret Value to access the Stripe API, the events from both workloads that _Used_ the secret were also selected.
+
+[Back to Overview](#_top)
+
+## 8. Environment Tags
+
+<Screenshot
+  src={EnvironmentTagsLight}
+  srcDark={EnvironmentTagsDark}
+  alt="Screenshot of environment tags on resources"
+/>
+
+Archodex makes it easy to assign environments to resources in the Dashboard. Environment tags are displayed on resources
+in across the top right side of the resource node in the Graph View. These tags contain the first character of the
+environment, but the full environment name is shown when hovering over the tag.
+
+Archodex environments are hierarchical. In the above screenshot we see the _paymentservice › server_ resource is tagged
+with the _prod_ environment because the _prod_ environment was assigned to the parent Kubernetes Namespace resource
+(which in this example happens to also be named _prod_).
+
+Environments can be assigned to a resource by selecting the resource to show the button to add a new environment. In the
+above screenshot we see the _emailservice › server_ container has been selected and a "+" button to add an environment
+is shown. When assigning an environment to a resource, all current environments are shown, and new environments can be
+created as well.
+
+<Screenshot
+  src={EnvironmentAddLight}
+  srcDark={EnvironmentAddDark}
+  alt="Screenshot of adding an environment to a resource"
+/>
+
+Environments can be removed from a resource by clicking the "x" that appears when hovering over the environment tag.
+
+<Screenshot
+  src={EnvironmentRemoveLight}
+  srcDark={EnvironmentRemoveDark}
+  alt="Screenshot of removing an environment from a resource"
+/>
+
+[Back to Overview](#_top)
+
+## 9. Issues
+
+<Screenshot
+  src={IssueLight}
+  srcDark={IssueDark}
+  alt="Screenshot of a selected issue badge on a resource in the Graph View"
+/>
+
+Archodex detects potential issues based on observed events and resource configurations. When an issue is detected, an
+issue badge appears on the affected resource in the Graph View. In the above screenshot the issue badge on a Secret
+Value was clicked, which highlighted the events and associated resources for all issues related to that Secret Value.
+Clicking on an issue badge will also show the [Issues Table](#issues-table), where more information on each issue can be
+found.
 
 <CardGrid>
   <LinkCard
@@ -37,3 +309,5 @@ environments.
     href="dashboard/inventory"
   />
 </CardGrid>
+
+[Back to Overview](#_top)

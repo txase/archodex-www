@@ -1,6 +1,19 @@
 ---
-title: Inventory
+title: Inventory View
 description: Documentation on the Archodex Dashboard Inventory view
+sidebar:
+  order: 4
 ---
 
-TBD
+import Screenshot from '~/components/ui/Screenshot.astro';
+
+import InventoryLight from './inventory-light.png';
+import InventoryDark from './inventory-dark.png';
+
+<Screenshot src={InventoryLight} srcDark={InventoryDark} alt="Screenshot of the Archodex Dashboard Inventory view" />
+
+The Archodex Dashboard Inventory view shows you all the resource and event observations. It is primarily used for
+diagnostic purposes, to help you verify that the Archodex Agent is correctly observing resources and events in your
+environment.
+
+This view has no filters on the resources shown. It defaults to collapsing all parent resources.

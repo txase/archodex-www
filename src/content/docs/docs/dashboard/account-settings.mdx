@@ -1,0 +1,23 @@
+---
+title: Account Settings
+description: Documentation on the Archodex Dashboard Account Settings page
+sidebar:
+  order: 5
+---
+
+import Screenshot from '~/components/ui/Screenshot.astro';
+
+import AccountSettingsLight from './account-settings-light.png';
+import AccountSettingsDark from './account-settings-dark.png';
+
+<Screenshot
+  src={AccountSettingsLight}
+  srcDark={AccountSettingsDark}
+  alt="Screenshot of the Archodex Dashboard Account Settings page"
+/>
+
+The Account Settings page is where you can manage your API keys and delete your account.
+
+This page is also where you will be directed if the Archodex Dashboard is not able to reach your
+[self-hosted Archodex Service](../self-host). This can happen if your self-hosted service failed to initialize, and the
+Account Settings page is where you can safely re-attempt initialization of your service.

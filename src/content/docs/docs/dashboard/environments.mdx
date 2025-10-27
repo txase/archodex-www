@@ -1,6 +1,39 @@
 ---
-title: Environments
+title: Environments View
 description: Documentation on the Archodex Dashboard Environments view
+sidebar:
+  order: 3
 ---
 
-TBD
+import Screenshot from '~/components/ui/Screenshot.astro';
+
+import EnvironmentsLight from './environments-light.png';
+import EnvironmentsDark from './environments-dark.png';
+import EnvironmentsExpandedLight from './environments-expanded-light.png';
+import EnvironmentsExpandedDark from './environments-expanded-dark.png';
+
+<Screenshot
+  src={EnvironmentsLight}
+  srcDark={EnvironmentsDark}
+  alt="Screenshot of the Archodex Dashboard Environments view"
+/>
+
+The Archodex Dashboard Environments view helps you manage the tagging of environments to resources. By default, the view
+shows all resources that have been tagged with one or more environments. This makes it easy to see how your resources
+are organized in environments and to update environment tags as needed.
+
+Environment tags are displayed on resources in across the top right side of the resource node in the Graph View. These
+tags contain the first character of the environment, but the full environment name is shown when hovering over the tag.
+
+Archodex environments are hierarchical. In the above screenshot we see the _prod_ and _qa_ Kubernetes Namespace
+resources are tagged with their respective environments. When expanded, all the contained resources also inherit the
+environment tag, as shown in the below screenshot.
+
+<Screenshot
+  src={EnvironmentsExpandedLight}
+  srcDark={EnvironmentsExpandedDark}
+  alt="Screenshot of the Archodex Dashboard Environments view with the prod Kubernetes Namespace resource expanded showing inherited environment tags"
+/>
+
+This view has no filters on the resources shown. It defaults to expanding parent resources as needed to show all
+resources directly tagged with an environment.
