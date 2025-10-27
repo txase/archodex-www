@@ -1,0 +1,72 @@
+---
+import { Picture } from 'astro:assets';
+
+import Layout from '~/layouts/MarkdownLayout.astro';
+
+import ChasePhoto from './chase.jpg';
+import ApurvaPhoto from './apurva.jpg';
+
+const metadata = { title: 'Archodex Team', description: 'Meet the Archodex Team' };
+---
+
+<Layout frontmatter={metadata}>
+  <p>
+    👋 Hi there! We're Chase and Apurva, the team behind Archodex. We are passionate about building tools that help
+    teams operate their systems safely and with less stress. We use our deep skills and experience in building
+    observability, security, and developer experience solutions to solve some of the most challenging problems
+    encountered by DevSecOps teams.
+  </p>
+  <p>
+    Our goal is to develop Archodex sustainably for the long-term. We are building Archodex with our own resources
+    rather than taking outside funding, and are focused first and foremost on making exceptional software. You won't see
+    extravagant marketing campaigns from us or attempts to shoe-horn AI where it doesn't belong.
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+    <div
+      class="flex flex-col items-center rounded-lg shadow-lg px-6 text-justify dark:border dark:border-neutral-600 dark:bg-neutral-900"
+    >
+      <h3>Chase Douglas</h3>
+      <strong>Engineer / CEO</strong>
+      <Picture src={ChasePhoto} alt="Photo of Chase Douglas" class="w-32 h-32 rounded-full object-cover" />
+      <p>
+        Chase loves building tools that improve developer experience and team resilience. Before Archodex he was one of
+        the founders of <a href="https://stackery.io">Stackery</a>, which was acquired by AWS and relaunched as <a
+          href="https://aws.amazon.com/infrastructure-composer/">AWS Infrastructure Composer</a
+        >. While at AWS he led the Serverless Developer Experience organization as a Principal Engineer.
+      </p>
+      <p>
+        Chase also architected <a href="https://newrelic.com/platform/browser-monitoring"
+          >New Relic Browser Monitoring</a
+        >, the first client-side solution for website and web app observability, which was used at launch by sites
+        including the New York Times, Apple's Beats Music, and BitBucket. Later he led engineering at the runtime
+        application security company, Immunio (now part of Trend Micro), that protected apps from SQL Injection and
+        Cross-Site Scripting attacks using novel fingerprinting techniques.
+      </p>
+    </div>
+    <div
+      class="flex flex-col items-center rounded-lg shadow-lg px-6 text-justify dark:border dark:border-neutral-600 dark:bg-neutral-900"
+    >
+      <h3>Apurva Jantrania</h3>
+      <strong>Engineer / CTO</strong>
+      <Picture src={ApurvaPhoto} alt="Photo of Apurva Jantrania" class="w-32 h-32 rounded-full object-cover" />
+      <p>
+        Apurva is passionate about making complex systems accessible for developers. Joining Chase as Stackery's first
+        engineer, he architected novel solutions including a serverless CI/CD platform with ephemeral deployments and
+        automated infrastructure visualization. He then led the technical strategy and relaunch of Stackery as <a
+          href="https://aws.amazon.com/infrastructure-composer/">AWS Infrastructure Composer</a
+        >.
+      </p>
+      <p>
+        As a Principal Engineer at AWS, Apurva led development of foundational systems that enable products to deeply
+        understand customer environments, powering features in <a href="https://aws.amazon.com/q/"
+          >Amazon's AI assistant Q</a
+        > and
+        <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ExploreRelated.html"
+          >Amazon CloudWatch's knowledge graph of related resources</a
+        > within customer applications. His background spans the full technology stack from low level processor design at
+        Intel to modern cloud services, giving him a unique perspective for solving complex technical challenges.
+      </p>
+    </div>
+  </div>
+</Layout>
