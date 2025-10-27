@@ -1,0 +1,139 @@
+---
+title: Archodex Agent Reference
+sidebar:
+  order: 8
+---
+
+## Command-Line Help for `archodex-agent`
+
+This document contains the help content for the `archodex-agent` command-line program.
+
+**Command Overview:**
+
+- [`archodex-agent`](#archodex-agent)
+- [`archodex-agent network`](#archodex-agent-network)
+- [`archodex-agent secrets`](#archodex-agent-secrets)
+- [`archodex-agent secrets github`](#archodex-agent-secrets-github)
+
+### `archodex-agent`
+
+**Usage:** `archodex-agent <COMMAND>`
+
+###### **Subcommands:**
+
+- `network` — Network agent commands
+- `secrets` — Secrets scanner agent commands
+
+### `archodex-agent network`
+
+Network agent commands
+
+**Usage:** `archodex-agent network [OPTIONS]`
+
+###### **Subcommands:**
+
+###### **Options:**
+
+- `-k`, `--report-api-key <REPORT_API_KEY>` — Archodex Report API Key
+
+  If the Report API Key is not provided, the agent will run in logging-only mode and will not send reports to the
+  Archodex service.
+
+- `-s`, `--service-endpoint <SERVICE_ENDPOINT>` — Archodex Service Endpoint
+
+  The Service Endpoint to send reports to must be specified when Archodex is self-hosted (e.g.
+  `https://service.archodex:5732`).
+
+- `-l`, `--log-report <LOG_REPORT>` — Log report to stdout
+
+  Default value: `true`
+
+  Possible values: `true`, `false`
+
+- `--secret-values-hash-salt <SECRET_VALUES_HASH_SALT>` — Provide Salt for Secret Value Hashes
+
+  Secret Values are never logged or transmitted. Instead, they are cryptographically hashed (SHA-256) with a random
+  salt. Each Archodex service account has a unique salt. The salt value is embedded in the Archodex Report API Key. If
+  you do not provide an Archodex Report API Key, you may provide a salt value to use instead. This is useful for testing
+  and debugging purposes. If neither are provided, a random salt is generated at startup, which means Secret Value
+  hashes for the same values will be different between invocations of the agent. This is a security risk mitigation to
+  ensure that common secret values cannot be determined from Secret Value hashes.
+
+  The value must be a hex string with a length of 16 bytes (32 characters)
+
+- `-e`, `--enable-rulesets <RULESET_ID[,RULESET_ID...]>` — Comma-separated list of Archodex built-in non-default
+  rulesets to enable
+
+  Default value: ``
+
+- `-d`, `--disable-rulesets <RULESET_ID[,RULESET_ID...]>` — Comma-separated list of Archodex built-in default rulesets
+  to disable
+
+  Default value: ``
+
+  Possible values: `github_actions@v1`, `hashicorp_vault@v1`, `openai@v1`, `sendgrid@v1`, `stripe@v1`
+
+- `-a`, `--additional-rulesets <[RULESET_ID=]PATH_OR_URL[,[RULESET_ID=]PATH_OR_URL...]>` — Use additional Archodex
+  rulesets from paths or URLs
+
+  The IDs of the rulesets default to the stems of the ruleset filenames. For example, if an additional ruleset is
+  `https://example.com/my_ruleset.yaml`, its ruleset ID will be `my_ruleset`.
+
+- `-r`, `--ruleset-input <RULESET_ID:INPUT_NAME=VALUE>` — Provide a value for an Archodex ruleset input
+
+  (e.g. `--ruleset-input <ruleset_id>:<input_name>=<value>`)
+
+  [env: `ARCHODEX_RULESET_INPUT_<RULESET_ID>_<INPUT_NAME>=`]
+
+### `archodex-agent secrets`
+
+Secrets scanner agent commands
+
+**Usage:** `archodex-agent secrets <COMMAND>`
+
+###### **Subcommands:**
+
+- `github` — Report Secret Values from GitHub Secret Scanning
+
+### `archodex-agent secrets github`
+
+Report Secret Values from GitHub Secret Scanning
+
+**Usage:** `archodex-agent secrets github [OPTIONS] --github-org <GITHUB_ORG> --github-token <GITHUB_TOKEN>`
+
+###### **Options:**
+
+- `-k`, `--report-api-key <REPORT_API_KEY>` — Archodex Report API Key
+
+  If the Report API Key is not provided, the agent will run in logging-only mode and will not send reports to the
+  Archodex service.
+
+- `-s`, `--service-endpoint <SERVICE_ENDPOINT>` — Archodex Service Endpoint
+
+  The Service Endpoint to send reports to must be specified when Archodex is self-hosted (e.g.
+  `https://service.archodex:5732`).
+
+- `-l`, `--log-report <LOG_REPORT>` — Log report to stdout
+
+  Default value: `true`
+
+  Possible values: `true`, `false`
+
+- `--secret-values-hash-salt <SECRET_VALUES_HASH_SALT>` — Provide Salt for Secret Value Hashes
+
+  Secret Values are never logged or transmitted. Instead, they are cryptographically hashed (SHA-256) with a random
+  salt. Each Archodex service account has a unique salt. The salt value is embedded in the Archodex Report API Key. If
+  you do not provide an Archodex Report API Key, you may provide a salt value to use instead. This is useful for testing
+  and debugging purposes. If neither are provided, a random salt is generated at startup, which means Secret Value
+  hashes for the same values will be different between invocations of the agent. This is a security risk mitigation to
+  ensure that common secret values cannot be determined from Secret Value hashes.
+
+  The value must be a hex string with a length of 16 bytes (32 characters)
+
+- `-o`, `--github-org <GITHUB_ORG>` — GitHub Organization
+
+  The GitHub Organization to fetch secret scanning alerts from.
+
+- `-t`, `--github-token <GITHUB_TOKEN>` — GitHub Token
+
+  This token is used to fetch secret scanning alerts for the GitHub Organization.
