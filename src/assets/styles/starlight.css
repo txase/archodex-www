@@ -89,3 +89,8 @@ header.header {
 main > * {
   @apply border-none;
 }
+
+p a,
+span a {
+  @apply text-primary no-underline hover:underline;
+}
