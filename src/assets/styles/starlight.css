@@ -94,3 +94,8 @@ p a,
 span a {
   @apply text-primary no-underline hover:underline;
 }
+
+/* Add horizontal rule under page titles */
+.sl-container > h1#_top {
+  @apply pb-1 border-b border-b-primary;
+}
