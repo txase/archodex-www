@@ -1,0 +1,38 @@
+---
+title: Supported Runtimes
+description: Documentation on which workload runtimes and encryption libraries Archodex supports
+sidebar:
+  order: 7
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The Archodex Agent uses [eBPF](https://ebpf.io/) for universal instrumentation of workloads. However, the agent must
+have specific instrumentation for certain runtimes and encryption libraries. For example, since Go routines multiplex
+multiple logical threads of execution onto a smaller number of OS threads, the Archodex Agent must be able to track
+which Go routine is performing network operations to correctly attribute observed service interactions.
+
+The Archodex Agent supports most runtimes out of the box, including:
+
+- PHP
+- Python
+- Ruby
+- Node.js
+- Go (GoTLS)
+- Rust (RustTLS and Ring, including rust, FIPS, and native / OpenSSL features)
+
+If you find the Archodex Agent is unable to observe service interactions in a particular runtime or application, please
+open an issue on our [centralized issue tracker](https://github.com/Archodex/archodex/issues).
+
+## OpenSSL and Compatible Libraries
+
+Many runtimes, such as Node.js and Python, use OpenSSL and/or OpenSSL-compatible libraries for TLS encryption.
+Archodex's eBPF instrumention supports any use of OpenSSL-compatible libraries, including when they are dynamically
+linked or statically linked into a runtime or application binary.
+
+## Stripped Binaries
+
+The Archodex Agent must be able to find encryption library symbols to instrument them. The agent will not be able to
+instrument runtimes or applications that have been fully stripped of their symbols. Stripping symbols is uncommon, as
+they are also used for informative stack traces in crash reports, but we mention this for completeness. Note that
+stripping _debug_ symbols does not affect Archodex's ability to instrument runtimes and applications.
