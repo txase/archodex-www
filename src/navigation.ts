@@ -27,7 +27,7 @@ export const headerData: HeaderData = {
           href: 'https://matrix.to/#/#archodex:matrix.org',
           openInNewTab: true,
         },
-        { text: 'Contributing', href: 'http://localhost:4321/contributing' },
+        { text: 'Contributing', href: getPermalink('/contributing') },
         { text: 'Fair Source', href: getPermalink('/licensing') },
       ],
     },
