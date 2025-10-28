@@ -11,6 +11,9 @@ import PostHog from '../PostHog.astro';
 
 {
   import.meta.env.PUBLIC_POSTHOG_PROJECT_API_KEY ? (
-    <PostHog projectApiKey={import.meta.env.PUBLIC_POSTHOG_PROJECT_API_KEY} />
+    <PostHog
+      projectApiKey={import.meta.env.PUBLIC_POSTHOG_PROJECT_API_KEY}
+      apiHost={`https://a.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}`}
+    />
   ) : null
 }
