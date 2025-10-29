@@ -28,9 +28,6 @@ const hasExternalScripts = false;
 const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroIntegration)[] = []) =>
   hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
 
-// Astro's Image assets implementation adds a couple innocuous inline styles for layout purposes.
-const ASTRO_IMAGE_LAYOUT_INLINE_STYLE_HASH = 'sha256-hjMqIQL7MuYQfMDg+fxR02kR4RdMYaGpSDYAkyk/LMA=';
-
 export default defineConfig({
   output: 'static',
 
@@ -70,11 +67,10 @@ export default defineConfig({
     astroCSPHashGenerator({
       base: [
         "default-src 'self';",
-        `connect-src 'self' https://rules.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://api.web3forms.com/submit https://*.posthog.com;`,
-        `style-src-attr 'unsafe-hashes' '${ASTRO_IMAGE_LAYOUT_INLINE_STYLE_HASH}'`,
+        `connect-src 'self' https://rules.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://api.web3forms.com/submit;`,
       ].join(' '),
-      additionalScriptSrc: "'wasm-unsafe-eval' https://*.posthog.com",
-      additionalStyleSrc: 'https://*.posthog.com',
+      additionalScriptSrc: `'wasm-unsafe-eval' https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN}`,
+      additionalStyleSrc: `https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN}`,
     }),
 
     react(),

@@ -3,6 +3,9 @@ import { fileURLToPath } from 'node:url';
 import type { AstroIntegration } from 'astro';
 import { parse, HTMLElement } from 'node-html-parser';
 
+// Astro's Image assets implementation adds a couple innocuous inline styles for layout purposes.
+const ASTRO_IMAGE_LAYOUT_INLINE_STYLE_HASH = 'sha256-hjMqIQL7MuYQfMDg+fxR02kR4RdMYaGpSDYAkyk/LMA=';
+
 const createCspHash = async (s: string) => {
   const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
   const hashBase64 = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
@@ -55,13 +58,14 @@ export const astroCSPHashGenerator: (config: {
       const CSPString =
         `${base.replace(/;$/, '')}; ` +
         `script-src 'self' ${scriptHashes.values().toArray().join(' ')} ${additionalScriptSrc}; ` +
-        `style-src-elem 'self' ${styleElemHashes.values().toArray().join(' ')} ${additionalStyleSrc}; `;
+        `style-src-elem 'self' ${styleElemHashes.values().toArray().join(' ')} ${additionalStyleSrc}; ` +
+        `style-src-attr 'unsafe-hashes' '${ASTRO_IMAGE_LAYOUT_INLINE_STYLE_HASH}';`;
 
       const starlightCSPString =
         `${base.replace(/;$/, '')}; ` +
         `script-src 'self' ${scriptHashes.values().toArray().join(' ')} ${additionalScriptSrc}; ` +
         `style-src-elem 'self' 'unsafe-inline' ${additionalStyleSrc}; ` +
-        `style-src-attr 'unsafe-inline'; ` +
+        "style-src-attr 'unsafe-inline'; " +
         "img-src 'self' data:;";
 
       for (const page of pages) {
