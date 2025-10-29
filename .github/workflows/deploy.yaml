@@ -65,6 +65,8 @@ jobs:
           echo "PUBLIC_ARCHODEX_DOMAIN=${PUBLIC_ARCHODEX_DOMAIN}" >> $GITHUB_ENV
 
       - name: Build site
+        env:
+          PUBLIC_POSTHOG_PROJECT_API_KEY: ${{ vars.POSTHOG_PROJECT_API_KEY }}
         run: npm run build
 
       - name: Setup robots.txt
