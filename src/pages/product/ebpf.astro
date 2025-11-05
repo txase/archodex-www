@@ -3,6 +3,7 @@ import Layout from '~/layouts/PageLayout.astro';
 import Hero2 from '~/components/widgets/Hero2.astro';
 import Features2 from '~/components/widgets/Features2.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
+import { getStartedUrl } from '~/navigation';
 
 const metadata = { title: 'eBPF Sensor' };
 ---
@@ -88,11 +89,7 @@ const metadata = { title: 'eBPF Sensor' };
     </Fragment>
   </Features2>
 
-  <CallToAction
-    actions={[
-      { variant: 'primary', text: 'Get Started', href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}/signup` },
-    ]}
-  >
+  <CallToAction actions={[{ variant: 'primary', text: 'Get Started', href: getStartedUrl }]}>
     <Fragment slot="title"> Solve Your DevSecOps Challenges Today </Fragment>
   </CallToAction>
 </Layout>

@@ -5,6 +5,7 @@ import Prices from '~/components/widgets/Pricing.astro';
 import Features3 from '~/components/widgets/Features3.astro';
 import Headline from '~/components/ui/Headline.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import { getStartedUrl } from '~/navigation';
 
 const metadata = { title: 'Pricing' };
 ---
@@ -29,12 +30,7 @@ const metadata = { title: 'Pricing' };
           { description: 'MFA / Passkey authentication' },
           { description: 'Community support' },
         ],
-        callToAction: {
-          variant: 'primary',
-          target: '_blank',
-          text: 'Get started',
-          href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}/signup`,
-        },
+        callToAction: { variant: 'primary', text: 'Get started', href: getStartedUrl },
       },
       {
         title: 'Organization',

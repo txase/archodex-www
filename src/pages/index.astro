@@ -13,6 +13,7 @@ import Steps2 from '~/components/widgets/Steps2.astro';
 
 import heroImage from '../assets/images/hero.svg';
 import resourceGraph from '../assets/images/resource-graph-3-2.svg';
+import { getStartedUrl } from '~/navigation';
 
 const metadata = { title: 'Archodex — Prevent DevSecOps Outages', ignoreTitleTemplate: true };
 
@@ -41,7 +42,7 @@ const principalsTextWidth = '12ch';
         text: 'Launch Playground Demo',
         href: `https://play.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}`,
       },
-      { text: 'Get Started', href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}/signup` },
+      { text: 'Get Started', href: getStartedUrl },
     ]}
   />
 
@@ -172,11 +173,7 @@ const principalsTextWidth = '12ch';
 
   <!-- CallToAction Widget *********** -->
 
-  <CallToAction
-    actions={[
-      { variant: 'primary', text: 'Get Started', href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}/signup` },
-    ]}
-  >
+  <CallToAction actions={[{ variant: 'primary', text: 'Get Started', href: getStartedUrl }]}>
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-primary/5 dark:bg-transparent"></div>
     </Fragment>

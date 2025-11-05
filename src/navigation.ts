@@ -1,6 +1,8 @@
 import type { FooterData, HeaderData } from './types';
 import { getPermalink } from './utils/permalinks';
 
+export const getStartedUrl = getPermalink('/docs/getting-started');
+
 export const headerData: HeaderData = {
   links: [
     {
@@ -38,12 +40,7 @@ export const headerData: HeaderData = {
   ],
   actions: [
     { text: 'Playground', href: `https://play.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}`, target: '_blank' },
-    {
-      variant: 'primary',
-      text: 'Get Started',
-      href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}/signup`,
-      target: '_blank',
-    },
+    { variant: 'primary', text: 'Get Started', href: getStartedUrl },
   ],
   position: 'left',
 };
