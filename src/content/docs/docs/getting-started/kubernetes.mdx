@@ -26,8 +26,8 @@ Agent container runs on each Kubernetes Node.
 - **Chart Repository:** `https://helm.archodex.com`
 - **Chart Name:** `archodex-agent`
 - **Values:**
-  - **`reportApiKey`:** (Optional) The Archodex Report API Key value. When provided, the agent containers will report
-    observations periodically to your Archodex account.
+  - **`reportApiKeySecretName`:** (Optional) The Kubernetes secret containing your Archodex Report API Key. When
+    provided, the agent containers will report observations periodically to your Archodex account.
   - **`serviceEndpoint`:** (Optional) The Archodex Service Endpoint URL. Set this value to the location agent containers
     will send reports to when self-hosting. It must be resolvable within the cluster.
   - **`logReport`:** (Optional) Set to `'false'` to disable logging observations to agent container logs.
@@ -43,7 +43,11 @@ To install the Archodex Agent helm chart in your cluster using the helm CLI, fir
 
 ```sh
 $ helm repo add archodex https://helm.archodex.com
-$ helm install archodex-agent --set reportApiKey=<reportApiKey>
+# (Optional) Create a Kubernetes secret with your Report API Key to send
+# observations to your Archodex account
+$ kubectl create secret generic archodex-api-key --from-literal=value='<reportApiKey>'
+# Install the agent (include --set flag to enable reporting, omit for logging-only mode)
+$ helm install archodex-agent archodex/archodex-agent --set reportApiKeySecretName=archodex-api-key
 ```
 
 ## Observing Individual Workloads
