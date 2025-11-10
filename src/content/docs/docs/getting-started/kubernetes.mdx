@@ -26,8 +26,11 @@ Agent container runs on each Kubernetes Node.
 - **Chart Repository:** `https://helm.archodex.com`
 - **Chart Name:** `archodex-agent`
 - **Values:**
-  - **`reportApiKeySecretName`:** (Optional) The Kubernetes secret containing your Archodex Report API Key. When
-    provided, the agent containers will report observations periodically to your Archodex account.
+  - **`reportApiKey`:** (Optional) Your Archodex Report API Key. When provided, the agent containers will report
+    observations periodically to your Archodex account. The chart will automatically create a Kubernetes secret to store
+    this value securely.
+  - **`reportApiKeySecretName`:** (Optional) The name of an existing Kubernetes secret containing your Archodex Report
+    API Key. It is recommended to use this instead of `reportApiKey` for production deployments.
   - **`serviceEndpoint`:** (Optional) The Archodex Service Endpoint URL. Set this value to the location agent containers
     will send reports to when self-hosting. It must be resolvable within the cluster.
   - **`logReport`:** (Optional) Set to `'false'` to disable logging observations to agent container logs.
@@ -36,19 +39,32 @@ If you provided an Archodex Report API Key, observations will be logged and sent
 after agent startup and then once per reporting period (e.g. once per hour for free-tier accounts). The agent container
 will send one final report when the pod terminates.
 
-### Example Installation
+### Installation
 
-To install the Archodex Agent helm chart in your cluster using the helm CLI, first
-[install helm on your local machine](https://helm.sh/docs/intro/install/), then run the following commands:
+First [install helm on your local machine](https://helm.sh/docs/intro/install/), then run the following commands:
 
 ```sh
 $ helm repo add archodex https://helm.archodex.com
-# (Optional) Create a Kubernetes secret with your Report API Key to send
-# observations to your Archodex account
-$ kubectl create secret generic archodex-api-key --from-literal=value='<reportApiKey>'
-# Install the agent (include --set flag to enable reporting, omit for logging-only mode)
-$ helm install archodex-agent archodex/archodex-agent --set reportApiKeySecretName=archodex-api-key
+# Install the agent with your Report API Key
+$ helm install archodex-agent archodex/archodex-agent --set reportApiKey='<your-report-api-key>'
 ```
+
+<Aside type="tip">
+  This automatically creates a Kubernetes secret to securely store your API key.\
+  For logging-only mode (no reporting to Archodex), omit the `--set reportApiKey` flag.
+
+</Aside>
+
+<Aside>
+**For production deployments**, use `reportApiKeySecretName` instead of `reportApiKey` to reference a secret you
+manage externally with your preferred secret management solution (e.g., sealed-secrets, external-secrets):
+
+```sh
+kubectl create secret generic archodex-api-key --from-literal=value='<your-report-api-key>'
+helm install archodex-agent archodex/archodex-agent --set reportApiKeySecretName=archodex-api-key
+```
+
+</Aside>
 
 ## Observing Individual Workloads
 
