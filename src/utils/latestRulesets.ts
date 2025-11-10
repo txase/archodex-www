@@ -1,7 +1,9 @@
 import * as yaml from 'yaml';
 import type { ArchodexAgentVersion, ArchodexRuleName, ArchodexRuleset } from '~/types';
 
-export const rulesDomain = () => `rules.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}`;
+const ARCHODEX_PROD_DOMAIN = 'archodex.com';
+
+export const rulesDomain = (domain = import.meta.env.PUBLIC_ARCHODEX_DOMAIN) => `rules.${domain}`;
 
 export const fetchRule = async (domain: string, version: ArchodexAgentVersion, rule: ArchodexRuleName) => {
   const res = await fetch(`https://${domain}/${version}/${rule}.yaml`);
@@ -50,9 +52,19 @@ let _latestRules:
 export const latestRulesets = async () => {
   if (_latestRules) return _latestRules;
 
-  const domain = rulesDomain();
+  let domain = rulesDomain();
 
-  const versionsRes = await fetch(`https://${domain}/versions.json`);
+  let versionsRes = await fetch(`https://${domain}/versions.json`);
+  if (!versionsRes.ok && import.meta.env.PUBLIC_ARCHODEX_DOMAIN !== ARCHODEX_PROD_DOMAIN) {
+    // Operating on a developer domain which may not have rules published - attempt to fall back to production
+    console.warn(`WARNING: Failed to fetch versions from ${domain}: ${versionsRes.status} ${versionsRes.statusText}`);
+    domain = rulesDomain(ARCHODEX_PROD_DOMAIN);
+    console.warn(`         Attempting to fall back to production - using ${domain}`);
+    versionsRes = await fetch(`https://${domain}/versions.json`);
+  }
+  if (!versionsRes.ok) {
+    throw new Error(`Failed to fetch versions from ${domain}: ${versionsRes.status} ${versionsRes.statusText}`);
+  }
   const { versions }: { versions: ArchodexAgentVersion[] } = await versionsRes.json();
 
   // We map/reduce to keep the same versions order, which is sorted from latest to oldest
