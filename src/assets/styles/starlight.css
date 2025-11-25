@@ -42,37 +42,44 @@ html {
   }
 }
 
-html[data-theme='dark'] {
-  --sl-color-black: black;
-  --sl-color-text: white;
-  --sl-color-bg: black;
-  --sl-color-bg-nav: black;
-  --sl-color-bg-sidebar: black;
+:root[data-theme='dark'] {
+  --dark-base: var(--color-neutral-900);
+  --dark-elevated: var(--color-neutral-800);
+  --dark-muted: var(--color-neutral-700);
 
-  starlight-menu-button > button {
-    @apply bg-black text-white;
-  }
-
-  starlight-menu-button[aria-expanded='true'] > button {
-    @apply bg-black;
-  }
-
-  .sidebar-pane a:where([aria-current='page']) {
-    @apply bg-primary text-white;
-  }
-
-  site-search > dialog {
-    @apply bg-black;
-  }
+  --sl-color-black: var(--dark-base);
+  --sl-color-text: var(--color-neutral-200);
+  --sl-color-bg: var(--dark-base);
+  --sl-color-bg-nav: var(--dark-elevated);
+  --sl-color-bg-sidebar: var(--dark-base);
+  --sl-color-text-accent: var(--color-primary);
 }
 
-html[data-theme='light'] {
+:root[data-theme='dark'] starlight-menu-button > button {
+  background-color: var(--dark-base);
+  color: var(--color-neutral-200);
+}
+
+:root[data-theme='dark'] starlight-menu-button[aria-expanded='true'] > button {
+  background-color: var(--dark-base);
+}
+
+:root[data-theme='dark'] .sidebar-pane a:where([aria-current='page']) {
+  @apply bg-primary;
+  color: white;
+}
+
+:root[data-theme='dark'] site-search > dialog {
+  background-color: var(--dark-muted);
+}
+
+:root[data-theme='light'] {
   --sl-color-bg: white;
   --sl-color-bg-nav: white;
+}
 
-  site-search > dialog {
-    @apply bg-white;
-  }
+:root[data-theme='light'] site-search > dialog {
+  @apply bg-white;
 }
 
 starlight-menu-button > button {
@@ -92,7 +99,13 @@ main > * {
 
 p a,
 span a {
-  @apply text-primary no-underline hover:underline;
+  color: var(--sl-color-text-accent);
+  text-decoration: none;
+}
+
+p a:hover,
+span a:hover {
+  text-decoration: underline;
 }
 
 /* Add horizontal rule under page titles */

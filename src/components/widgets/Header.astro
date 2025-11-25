@@ -32,13 +32,13 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
     'mx-auto',
     'w-full',
     'bg-white/90',
-    'dark:bg-black/70',
+    'dark:bg-[var(--dark-header-bg)]',
     'backdrop-blur-md',
     'transition-[opacity]',
     'ease-in-out',
     'shadow-md',
     'shadow-white',
-    'dark:shadow-black',
+    'dark:shadow-neutral-800',
     '[&.scroll>.announcement]:h-[3px]',
     '[&.scroll>.announcement]:py-0',
     '[&.scroll>.announcement]:text-primary',
@@ -122,7 +122,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                   <>
                     <button
                       type="button"
-                      class="hover:text-link dark:hover:text-white lg:px-4 py-3 flex items-center whitespace-nowrap"
+                      class="hover:text-link dark:hover:text-primary lg:px-4 py-3 flex items-center whitespace-nowrap"
                     >
                       {text}{' '}
                       <Icon
@@ -130,7 +130,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                         class="w-4 h-4 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline text-primary"
                       />
                     </button>
-                    <ul class="dropdown-menu md:backdrop-blur-md rounded md:absolute pl-4 md:pl-0 md:hidden font-medium bg-page md:min-w-[200px] md:drop-shadow-xl">
+                    <ul class="dropdown-menu md:backdrop-blur-md rounded md:absolute pl-4 md:pl-0 md:hidden font-medium bg-page dark:bg-neutral-700 md:min-w-[200px] md:drop-shadow-xl">
                       {links.map(({ text, href, icon, openInNewTab }) => (
                         <li>
                           <a
@@ -138,6 +138,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                               'first:rounded-t',
                               'last:rounded-b',
                               'hover:text-link',
+                              'dark:hover:text-primary',
                               'py-2',
                               'px-5',
                               'block',
@@ -161,7 +162,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                 ) : (
                   <a
                     class:list={[
-                      'hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap',
+                      'hover:text-link dark:hover:text-primary px-4 py-3 flex items-center whitespace-nowrap',
                       { 'aw-link-active': href === currentPath },
                     ]}
                     href={href}
