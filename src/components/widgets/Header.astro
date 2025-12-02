@@ -48,18 +48,6 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
   {...isSticky ? { 'data-aw-sticky-header': true } : {}}
   {...id ? { id } : {}}
 >
-  <div
-    class="announcement px-4 py-2 w-full bg-primary text-xs font-semibold text-white overflow-hidden transition-all duration-300 ease-in-out"
-  >
-    <span class="flex gap-3 decoration-1">
-      <a class="w-full text-end hover:underline" href="/licensing">Archodex is Fair Source</a>
-      <span class="border-l"></span>
-      <a class="w-full hover:underline" target="_blank" rel="noopener" href="https://github.com/Archodex">
-        Check out our code on GitHub →
-      </a>
-    </span>
-  </div>
-
   <div class="relative text-default py-3 px-3 md:px-6 w-full">
     <div
       class:list={[
