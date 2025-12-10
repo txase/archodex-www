@@ -9,69 +9,61 @@ import Steps from '~/components/widgets/Steps.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import Typewriter from '~/components/widgets/Typewriter.astro';
 import Hero2 from '~/components/widgets/Hero2.astro';
-import Steps2 from '~/components/widgets/Steps2.astro';
 
 import heroImage from '../assets/images/hero.svg';
 import resourceGraph from '../assets/images/resource-graph-3-2.svg';
-import { getStartedUrl } from '~/navigation';
+import { requestDemoUrl } from '~/navigation';
 
 const metadata = { title: 'Archodex — Prevent DevSecOps Outages', ignoreTitleTemplate: true };
 
-const resources = ['Secrets', 'Databases', 'Buckets', 'Clusters', 'Pods', 'Endpoints', 'Environments'];
-const resourcesTextWidth = '9.5ch';
+const annoyances = ['Blocking', 'Pestering', 'Proxying', 'Hounding', 'Annoying'];
 
-const principals = ['Services', 'Users', 'Roles', 'Policies', 'Accounts', 'CI/CD workflows', 'Teams', 'Applications'];
-const principalsTextWidth = '12ch';
+const enablements = ['Enabling', 'Accelerating', 'Empowering', 'Fueling'];
 ---
 
 <Layout metadata={metadata}>
   <!-- Hero Widget ******************* -->
 
   <Hero2
-    title="Know Every Secret. Rotate Without Fear."
-    subtitle="Track where your API keys are stored, audit which workloads use them, and rotate with confidence."
+    title="Centralized Security for AI Workloads"
+    subtitle="Accelerate Development, Capture Shadow AI, and Protect Data."
     image={{
       src: resourceGraph,
       alt: 'Graph of resources and their relationships',
       height: 400,
       fetchPriority: 'high',
     }}
-    actions={[
-      {
-        variant: 'primary',
-        text: 'Launch Playground Demo',
-        href: `https://play.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}`,
-      },
-      { text: 'Get Started', href: getStartedUrl },
-    ]}
+    actions={[{ text: 'Request Demo', href: requestDemoUrl }]}
   />
 
   <!-- Problem Section *************** -->
 
   <Steps
     id="problem"
-    title="Blind Spots Cause Outages"
+    title="Accelerate AI by Enabling Dev Teams"
     items={[
       {
-        title: 'A Typical Task...',
-        description: 'Alex grabs a ticket to rotate the database password',
-        icon: 'tabler:label-filled',
-      },
-      {
-        title: 'With Missing Intel...',
+        title: 'Add Archodex',
         description:
-          'Alex finds the password in their cloud secret vault, but misses that it is also stored in the on-prem vault',
-        icon: 'tabler:zoom-code-filled',
+          'Archodex requires a one-time configuration change at the compute layer. No need to modify application code.',
+        icon: 'tabler:label',
       },
       {
-        title: 'Causes a Misconfiguration...',
-        description: 'Alex rotates the cloud secret vault value',
-        icon: 'tabler:settings-filled',
+        title: 'Capture All AI, Including Shadow AI',
+        description:
+          'Archodex automatically captures all AI-related activity, including shadow AI, with attribution back to source workloads and service requests.',
+        icon: 'tabler:list-search',
       },
       {
-        title: 'And a Painful Outage.',
-        description: 'The API service goes down because it uses the on-prem secret vault for the database password',
-        icon: 'tabler:flame-filled',
+        title: 'Uniform Audit Logging',
+        description: 'Archodex emits uniform AI audit logs to your existing logging platform.',
+        icon: 'tabler:settings',
+      },
+      {
+        title: 'Accelerate Product Development',
+        description:
+          'Enrich your existing observability traces with PII-redacted AI payloads, enabling dev, product, and data teams.',
+        icon: 'tabler:flame',
       },
     ]}
     classes={{ container: 'max-w-3xl', items: { icon: 'text-secondary border-secondary' } }}
@@ -84,24 +76,24 @@ const principalsTextWidth = '12ch';
   <!-- Solution Section *************** -->
 
   <Hero>
-    <Fragment slot="title">
-      <div class="overlay md:min-h-[400px]">
-        <div class="md:top-[50%] md:translate-y-[-50%] md:pr-[180px] text-left text-5xl md:absolute z-10">
-          A Platform Engineer's Safety Net
-          <br /><br />
-          Know Which
-          <span class="font-semibold text-primary highlight">
-            <Typewriter words={resources} width={resourcesTextWidth} duration="3" />
+    <Fragment slot="content">
+      <div class="overlay py-10 md:py-0 md:min-h-[400px]">
+        <div class="md:top-[50%] md:translate-y-[-50%] text-left text-5xl/14 font-semibold md:absolute z-10">
+          Stop
+          <span class="text-primary highlight">
+            <Typewriter words={annoyances} duration={3} />
           </span>
           <br />
-          Are Accessed By Which
-          <span class="font-semibold text-primary highlight">
-            <Typewriter words={principals} width={principalsTextWidth} duration="3" />
+          Start
+          <span class="text-secondary highlight">
+            <Typewriter words={enablements} duration={3} />
           </span>
+          <br />
+          AI Teams
         </div>
 
         <div class="hidden md:block">
-          <Image src={heroImage} alt="Part of a graph of relationships between resources" class="w-full" />
+          <Image src={heroImage} alt="A graph of calls out to various AI services" class="w-full" />
         </div>
       </div>
     </Fragment>
@@ -113,22 +105,19 @@ const principalsTextWidth = '12ch';
     classes={{ items: { icon: 'text-secondary border-secondary' } }}
     items={[
       {
-        title: 'Prevent Outages',
-        description:
-          'Identify which resources, such as databases and object stores, are used (and shared) across applications, services, and environments.',
-        icon: 'tabler:flame-off',
+        title: 'Capture Shadow AI',
+        description: 'Know when developers use unapproved AI services, audit for data leakage.',
+        icon: 'tabler:spy',
       },
       {
-        title: 'Fix Security Risks',
-        description:
-          'Discover and fix common misconfigurations. Ensure least-privilege access and reduce blast radiuses.',
-        icon: 'tabler:shield-check',
+        title: 'Compliance and Governance',
+        description: 'Ensure security and data protection across all workloads. Accelerate ISO 42001 certification.',
+        icon: 'tabler:checklist',
       },
       {
-        title: 'Audit Secrets',
-        description:
-          'Discover when secrets have the same value across vaults and environments. Know which services use which secrets.',
-        icon: 'tabler:lock-password',
+        title: 'Advanced Analytics',
+        description: 'Zero-instrumentation AI observability for Langfuse, Datadog, Axiom, and more.',
+        icon: 'tabler:cell-signal-5',
       },
     ]}
   >
@@ -137,47 +126,13 @@ const principalsTextWidth = '12ch';
     </Fragment>
   </Features2>
 
-  <!-- How It Works -->
-
-  <Steps2
-    id="how-it-works"
-    title="How Archodex Works"
-    items={[
-      {
-        title: 'Sign up / Self-host',
-        description:
-          'Create a free, managed Archodex account in the data locality of your choice, or self-host Archodex in your own environment.',
-        icon: 'tabler:home-plus',
-      },
-      {
-        title: 'Instrument once',
-        description:
-          'Install the Archodex agent once in your Kubernetes clusters, cloud management accounts, and/or CI/CD systems. No application code modification necessary.',
-        icon: 'tabler:device-gamepad-3',
-      },
-      {
-        title: 'Intel aggregation',
-        description:
-          'The Archodex platform aggregates data in a graph database to help you understand how resources are accessed.',
-        icon: 'tabler:arrow-merge-both',
-      },
-      {
-        title: 'Insights',
-        description:
-          'The Archodex dashboard provides a birds-eye view of your workloads and secrets. Dashboard reports alert your team to problems, like duplicate keys used across environments, to investigate.',
-        icon: 'tabler:map',
-      },
-    ]}
-    classes={{ container: 'max-w-3xl' }}
-  />
-
   <!-- CallToAction Widget *********** -->
 
-  <CallToAction actions={[{ variant: 'primary', text: 'Get Started', href: getStartedUrl }]}>
+  <CallToAction actions={[{ variant: 'primary', text: 'Request Demo', href: requestDemoUrl }]}>
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-primary/5 dark:bg-transparent"></div>
     </Fragment>
 
-    <Fragment slot="title"> Solve Your DevSecOps Challenges Today </Fragment>
+    <Fragment slot="title">Protect & Accelerate Your AI Workloads</Fragment>
   </CallToAction>
 </Layout>

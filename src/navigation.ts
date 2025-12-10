@@ -2,80 +2,16 @@ import type { FooterData, HeaderData } from './types';
 import { getPermalink } from './utils/permalinks';
 
 export const getStartedUrl = getPermalink('/docs/getting-started');
+export const requestDemoUrl = getPermalink('/contact/request-demo');
 
 export const headerData: HeaderData = {
-  links: [
-    {
-      text: 'Project',
-      links: [
-        { text: 'Secrets Observability', href: getPermalink('/product/secrets') },
-        { text: 'eBPF Sensor', href: getPermalink('/product/ebpf') },
-        { text: 'Hosting Options', href: getPermalink('/product/hosting-options') },
-      ],
-    },
-    {
-      text: 'Community',
-      links: [
-        {
-          text: 'Discussions',
-          icon: 'tabler:brand-github',
-          href: 'https://github.com/orgs/Archodex/discussions',
-          openInNewTab: true,
-        },
-        { text: 'Repositories', icon: 'tabler:brand-github', href: 'https://github.com/archodex', openInNewTab: true },
-        {
-          text: 'Chat',
-          icon: 'tabler:brand-matrix',
-          href: 'https://matrix.to/#/#archodex:matrix.org',
-          openInNewTab: true,
-        },
-        { text: 'Contributing', href: getPermalink('/contributing') },
-        { text: 'Fair Source', href: getPermalink('/licensing') },
-      ],
-    },
-    { text: 'Team', href: getPermalink('/team') },
-    { text: 'Pricing', href: getPermalink('/pricing') },
-    { text: 'Docs', href: getPermalink('/docs') },
-    { text: 'Login', href: `https://app.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}` },
-  ],
-  actions: [
-    { text: 'Playground', href: `https://play.${import.meta.env.PUBLIC_ARCHODEX_DOMAIN}`, target: '_blank' },
-    { variant: 'primary', text: 'Get Started', href: getStartedUrl },
-  ],
+  links: [],
+  actions: [{ variant: 'primary', text: 'Request Demo', href: requestDemoUrl }],
   position: 'left',
 };
 
 export const footerData: FooterData = {
   links: [
-    {
-      text: 'Project',
-      links: [
-        { text: 'Secrets Observability', href: getPermalink('/product/secrets') },
-        { text: 'eBPF Sensor', href: getPermalink('/product/ebpf') },
-        { text: 'Hosting Options', href: getPermalink('/product/hosting-options') },
-        { text: 'Pricing', href: getPermalink('/pricing') },
-      ],
-    },
-    {
-      text: 'Community',
-      links: [
-        {
-          text: 'Discussions',
-          icon: 'tabler:brand-github',
-          href: 'https://github.com/orgs/Archodex/discussions',
-          openInNewTab: true,
-        },
-        { text: 'Repositories', icon: 'tabler:brand-github', href: 'https://github.com/archodex', openInNewTab: true },
-        {
-          text: 'Chat',
-          icon: 'tabler:brand-matrix',
-          href: 'https://matrix.to/#/#archodex:matrix.org',
-          openInNewTab: true,
-        },
-        { text: 'Contributing', href: getPermalink('/contributing') },
-        { text: 'Licensing', href: getPermalink('/licensing') },
-      ],
-    },
     {
       text: 'About Us',
       links: [

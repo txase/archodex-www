@@ -1,34 +1,22 @@
 ---
-const { words, width, duration } = Astro.props as { words: string[]; width: string; duration: number };
+interface Props {
+  words: string[];
+  duration: number;
+}
+
+const { words, duration } = Astro.props;
 
 const id = Math.random().toString(36).substring(7);
 
 const wordsStyle = `
-  .words_${id} {
-    display: inline-block;
-    position: relative;
-    width: ${width};
-    overflow: hidden;
-    vertical-align: top;
-    height: 1em;
-    white-space: nowrap;
-  }
-
-  .words_${id} span {
+  .words_${id} > p {
     animation: rotateWordsSecond_${id} ${words.length * duration}s linear infinite 0s;
-    position: absolute;
-    top: 0;
-    left: 0;
-    text-align: left;
-    overflow: hidden;
-    width: 0;
-    opacity: 0;
   }
 
   @keyframes rotateWordsSecond_${id} {
-    0% { opacity: 1;  width: 0; }
-    ${35 / words.length}% { opacity: 1; width: ${width}; }
-    ${90 / words.length}% { opacity: 1; width: ${width}; }
+    0% { opacity: 1; width: 0; }
+    ${35 / words.length}% { opacity: 1; width: 100%; }
+    ${90 / words.length}% { opacity: 1; width: 100%; }
     ${100 / words.length}% { opacity: 1; width: 0; }
   }
 `;
@@ -36,7 +24,7 @@ const wordsStyle = `
 const delayStyleClasses = words
   .map(
     (_, index) => `
-  .words_${id} span:nth-child(${index + 1}) { animation-delay: ${duration * index}s; }
+  .words_${id} > p:nth-of-type(${index + 1}) { animation-delay: ${duration * index}s; }
 `,
   )
   .join('');
@@ -46,6 +34,13 @@ const allStyles = wordsStyle + delayStyleClasses;
 
 <style set:html={allStyles}></style>
 
-<span class={`words_${id}`}>
-  {words.map((word) => <span>{word}</span>)}
-</span>
+&hairsp;
+
+<div
+  class={`absolute inline-grid grid-cols-[minmax(max-content,1fr)] grid-rows-[1fr] w-max h-full whitespace-nowrap words_${id}`}
+>
+  <div class="invisible pointer-events-none row-start-1" aria-hidden="true">
+    {words.map((word) => <span class="block w-max absolute left-0">{word}</span>)}
+  </div>
+  {words.map((word) => <p class="row-start-1 overflow-hidden w-0 opacity-0">{word}</p>)}
+</div>
