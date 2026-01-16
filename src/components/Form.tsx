@@ -71,6 +71,7 @@ const Form: React.FC<FormProps> = ({ inputs, textarea, disclaimer, button, descr
             rows={textarea.rows ? textarea.rows : 15}
             placeholder={textarea.placeholder}
             value={textarea.value}
+            defaultValue={textarea.defaultValue}
             className="py-3 px-4 block w-full text-md rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900"
           />
         </div>

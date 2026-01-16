@@ -209,6 +209,7 @@ export interface Textarea {
   placeholder?: string;
   rows?: number;
   value?: string;
+  defaultValue?: string;
 }
 
 export interface Disclaimer {
