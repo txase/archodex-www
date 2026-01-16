@@ -25,8 +25,8 @@ const enablements = ['Enabling', 'Accelerating', 'Empowering', 'Fueling'];
   <!-- Hero Widget ******************* -->
 
   <Hero2
-    title="Centralized Security for AI Workloads"
-    subtitle="Accelerate Development, Capture Shadow AI, and Protect Data."
+    title="Accelerate AI Development"
+    subtitle="Turn-key Compliance and Security for AI Workloads."
     image={{
       src: resourceGraph,
       alt: 'Graph of resources and their relationships',
@@ -43,26 +43,29 @@ const enablements = ['Enabling', 'Accelerating', 'Empowering', 'Fueling'];
     title="Accelerate AI by Enabling Dev Teams"
     items={[
       {
-        title: 'Add Archodex',
+        title: 'Install Archodex',
         description:
-          'Archodex requires a one-time configuration change at the compute layer. No need to modify application code.',
+          'Archodex uses Zero-Instrumentation approaches. No need to modify application code. No network proxies.',
         icon: 'tabler:label',
       },
       {
         title: 'Capture All AI, Including Shadow AI',
-        description:
-          'Archodex automatically captures all AI-related activity, including shadow AI, with attribution back to source workloads and service requests.',
+        description: 'Archodex automatically captures all AI-related activity, including shadow AI.',
         icon: 'tabler:list-search',
       },
       {
-        title: 'Uniform Audit Logging',
-        description: 'Archodex emits uniform AI audit logs to your existing logging platform.',
-        icon: 'tabler:settings',
+        title: 'Security: Uniform Audit Logging',
+        description: 'Archodex emits uniform AI audit logs to your logging platform of choice.',
+        icon: 'tabler:file-text-shield',
       },
       {
-        title: 'Accelerate Product Development',
-        description:
-          'Enrich your existing observability traces with PII-redacted AI payloads, enabling dev, product, and data teams.',
+        title: 'Compliance: Data Protection',
+        description: 'PII anonymization for analytics and OpenTelemetry flows.',
+        icon: 'tabler:rosette-discount-check',
+      },
+      {
+        title: 'Product: Iterate and Ship Faster',
+        description: 'Safer usage analysis, increased data access, and more.',
         icon: 'tabler:flame',
       },
     ]}
@@ -133,6 +136,6 @@ const enablements = ['Enabling', 'Accelerating', 'Empowering', 'Fueling'];
       <div class="absolute inset-0 bg-primary/5 dark:bg-transparent"></div>
     </Fragment>
 
-    <Fragment slot="title">Protect & Accelerate Your AI Workloads</Fragment>
+    <Fragment slot="title">Accelerate Your AI Workloads</Fragment>
   </CallToAction>
 </Layout>
