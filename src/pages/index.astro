@@ -25,11 +25,11 @@ const enablements = ['Enabling', 'Accelerating', 'Empowering', 'Fueling'];
   <!-- Hero Widget ******************* -->
 
   <Hero2
-    title="Accelerate AI Development"
-    subtitle="Turn-key Compliance and Security for AI Workloads."
+    title="A Central Control Plane for AI"
+    subtitle="Protection and governance for AI assistants and workloads."
     image={{
       src: resourceGraph,
-      alt: 'Graph of resources and their relationships',
+      alt: 'Graph of AI workloads and services and resources they interact with',
       height: 400,
       fetchPriority: 'high',
     }}
@@ -40,33 +40,25 @@ const enablements = ['Enabling', 'Accelerating', 'Empowering', 'Fueling'];
 
   <Steps
     id="problem"
-    title="Accelerate AI by Enabling Dev Teams"
+    title="Protect LLM and Agentic Activity"
     items={[
       {
-        title: 'Install Archodex',
+        title: 'Install / Deploy Archodex',
         description:
-          'Archodex uses Zero-Instrumentation approaches. No need to modify application code. No network proxies.',
-        icon: 'tabler:label',
+          'Archodex uses Zero-Instrumentation approaches. No network proxies. No configuration or code changes. No breakage.',
+        icon: 'tabler:subtitles-ai',
       },
       {
-        title: 'Capture All AI, Including Shadow AI',
-        description: 'Archodex automatically captures all AI-related activity, including shadow AI.',
-        icon: 'tabler:list-search',
+        title: 'Protect all access by agents',
+        description:
+          'Archodex secures both external and internal traffic, prevent data exfiltration and unauthorized access.',
+        icon: 'tabler:settings-ai',
       },
       {
-        title: 'Security: Uniform Audit Logging',
-        description: 'Archodex emits uniform AI audit logs to your logging platform of choice.',
-        icon: 'tabler:file-text-shield',
-      },
-      {
-        title: 'Compliance: Data Protection',
-        description: 'PII anonymization for analytics and OpenTelemetry flows.',
-        icon: 'tabler:rosette-discount-check',
-      },
-      {
-        title: 'Product: Iterate and Ship Faster',
-        description: 'Safer usage analysis, increased data access, and more.',
-        icon: 'tabler:flame',
+        title: 'Complete Coverage',
+        description:
+          'Automatically protects all AI running on the host OS, inside devcontainers, and inside compute environments.',
+        icon: 'tabler:world-check',
       },
     ]}
     classes={{ container: 'max-w-3xl', items: { icon: 'text-secondary border-secondary' } }}
@@ -136,6 +128,6 @@ const enablements = ['Enabling', 'Accelerating', 'Empowering', 'Fueling'];
       <div class="absolute inset-0 bg-primary/5 dark:bg-transparent"></div>
     </Fragment>
 
-    <Fragment slot="title">Accelerate Your AI Workloads</Fragment>
+    <Fragment slot="title">Protect Your AI Usage</Fragment>
   </CallToAction>
 </Layout>
