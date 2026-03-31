@@ -1,0 +1,61 @@
+---
+import ContactLayout from '~/layouts/ContactLayout.astro';
+
+const metadata = { title: 'Request Private Beta Access', description: 'Request Private Beta Access | Archodex' };
+
+const CONTACT_US_MESSAGE = `Hi Archodex Team!
+
+I would like to request access to the Archodex private beta.
+
+<Optionally, tell us more about your use case, environment, etc.>
+`;
+---
+
+<ContactLayout title="Real protection for AI, no security theater." prefill={CONTACT_US_MESSAGE} metadata={metadata}>
+  <section class="relative">
+    <div class="max-w-5xl mx-auto px-5 pb-10 md:pb-14 space-y-4">
+      <p>
+        Archodex observes and protects AI activity across the host OS, inside devcontainers and container VMs, and in
+        compute clusters. It can enforce policy to allow, block, redact, and tokenize sensitive data before risky
+        activity turns into data leakage or unauthorized actions.
+      </p>
+      <p>
+        What makes Archodex different is coverage. We can see the full payloads of LLM and agentic network requests,
+        including tool-driven access to internal and external services, even when those channels are protected with TLS.
+        There are no MITM proxies, no certificate management burden, and no breakage from mTLS or cert pinning.
+      </p>
+
+      <div class="grid gap-4 md:grid-cols-3 mt-8 text-center">
+        <div
+          class="rounded-lg border border-neutral-200 dark:border-neutral-700 px-5 bg-primary/5 dark:bg-white/5 py-5"
+        >
+          <h3 class="text-xl font-bold font-heading mb-2">Individual Builders</h3>
+          <p>
+            Start from a safe default. Archodex blocks authenticated traffic and read-write operations out of the box,
+            then gives you fine-grained control to allow, block, redact, or tokenize access to external and internal
+            services.
+          </p>
+        </div>
+        <div
+          class="rounded-lg border border-neutral-200 dark:border-neutral-700 px-5 bg-primary/5 dark:bg-white/5 py-5"
+        >
+          <h3 class="text-xl font-bold font-heading mb-2">Security and Platform Teams</h3>
+          <p>
+            Enable AI usage without losing visibility or control. Archodex delivers centralized, endpoint-level coverage
+            across local machines, containers, and clusters where proxy-based and domain-based approaches leave gaps.
+          </p>
+        </div>
+        <div
+          class="rounded-lg border border-neutral-200 dark:border-neutral-700 px-5 bg-primary/5 dark:bg-white/5 py-5"
+        >
+          <h3 class="text-xl font-bold font-heading mb-2">Advanced Agent Workloads</h3>
+          <p>
+            Archodex fills a gap in projects like NVIDIA NemoClaw / OpenShell. These projects sandbox local resource
+            access, but do not have network protection by default because of complications with MITM proxying. Archodex
+            can be layered on top.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</ContactLayout>

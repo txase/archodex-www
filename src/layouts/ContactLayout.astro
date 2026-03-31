@@ -3,19 +3,23 @@ import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import ContactUs from '~/components/widgets/Contact.astro';
 
-const metadata = { title: 'Contact', description: 'Contact | Archodex' };
-
 export interface Props {
+  title?: string;
   prefill?: string;
+  metadata?: { title: string; description: string };
 }
 
-const { prefill } = Astro.props;
+const metadata = Astro.props.metadata || { title: 'Contact', description: 'Contact | Archodex' };
+
+const { title, prefill } = Astro.props;
 ---
 
 <Layout metadata={metadata}>
   <!-- HeroText Widget ******************* -->
 
-  <HeroText title="Contact" />
+  <HeroText title={title || 'Contact'} />
+
+  <slot />
 
   <ContactUs
     id="form"
