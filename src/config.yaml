@@ -9,8 +9,7 @@ metadata:
     default: Archodex
     template: '%s — Archodex'
   description:
-    'Archodex is the DevSecOps observability platform to safely and securely manage all your applications, no matter how
-    they are built or hosted.'
+    'The control plane for AI, protecting all agent and workload traffic across endpoints, sandboxes, and data centers.'
   robots:
     index: true
     follow: true
