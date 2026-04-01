@@ -1,7 +1,12 @@
 ---
-import ContactLayout from '~/layouts/ContactLayout.astro';
+import Layout from '~/layouts/PageLayout.astro';
+import Header from '~/components/widgets/Header.astro';
+import Form from '~/components/Form';
+import Button from '~/components/ui/Button.astro';
 
 const metadata = { title: 'Request Private Beta Access', description: 'Request Private Beta Access | Archodex' };
+
+const headerData = { links: [], actions: [] };
 
 const CONTACT_US_MESSAGE = `Hi Archodex Team!
 
@@ -9,55 +14,96 @@ I would like to request access to the Archodex private beta.
 
 <Optionally, tell us more about your use case, environment, etc.>
 `;
+
+const audienceCards = [
+  {
+    title: 'Individual Builders',
+    description:
+      'Start from a safe default. Block authenticated and read-write traffic first, then selectively allow trusted services as you expand how agents can operate.',
+  },
+  {
+    title: 'Security and Platform Teams',
+    description:
+      'Enable and control AI usage without complicated proxies that break authentication and miss agent behavior across your internal services and resources.',
+  },
+  {
+    title: 'Advanced Agent Workloads',
+    description:
+      'Pair Archodex with agent sandboxes, like NVIDIA OpenShell, to add network-level visibility and policy enforcement for tool use and service access.',
+  },
+];
 ---
 
-<ContactLayout title="Real protection for AI, no security theater." prefill={CONTACT_US_MESSAGE} metadata={metadata}>
-  <div>
-    <section class="space-y-4">
-      <p>
-        Archodex observes and protects AI activity across the host OS, inside devcontainers and container VMs, and in
-        compute clusters. It can enforce policy to allow, block, redact, and tokenize sensitive data before risky
-        activity turns into data leakage or unauthorized actions.
-      </p>
-      <p>
-        What makes Archodex different is coverage. We can see the full payloads of LLM and agentic network requests,
-        including tool-driven access to internal and external services, even when those channels are protected with TLS.
-        There are no MITM proxies, no certificate management burden, and no breakage from mTLS or cert pinning.
-      </p>
-    </section>
+<Layout metadata={metadata}>
+  <Header slot="header" {...headerData} isSticky />
 
-    <section>
-      <div class="grid gap-4 md:grid-cols-3 mt-20 text-center">
-        <div
-          class="rounded-lg border border-neutral-200 dark:border-neutral-700 px-5 bg-primary/5 dark:bg-white/5 py-5"
-        >
-          <h3 class="text-xl font-bold font-heading mb-2">Individual Builders</h3>
-          <p>
-            Start from a safe default. Archodex blocks authenticated traffic and read-write operations out of the box,
-            then gives you fine-grained control to allow, block, redact, or tokenize access to external and internal
-            services.
-          </p>
-        </div>
-        <div
-          class="rounded-lg border border-neutral-200 dark:border-neutral-700 px-5 bg-primary/5 dark:bg-white/5 py-5"
-        >
-          <h3 class="text-xl font-bold font-heading mb-2">Security and Platform Teams</h3>
-          <p>
-            Enable AI usage without losing control. Archodex delivers centralized, endpoint-level coverage across local
-            machines, containers, and clusters where proxy-based and domain-based approaches leave gaps.
-          </p>
-        </div>
-        <div
-          class="rounded-lg border border-neutral-200 dark:border-neutral-700 px-5 bg-primary/5 dark:bg-white/5 py-5"
-        >
-          <h3 class="text-xl font-bold font-heading mb-2">Advanced Agent Workloads</h3>
-          <p>
-            Add network-level protection to projects like NVIDIA NemoClaw / OpenShell. These sandbox local resource
-            access, but do not protect network traffic by default because of complications with MITM proxying. Adding
-            Archodex closes this gap.
-          </p>
+  <section class="relative not-prose overflow-hidden">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="py-10 md:py-16 lg:py-20">
+        <div class="grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,28rem)] lg:items-start">
+          <div class="lg:max-w-3xl">
+            <p class="text-sm font-semibold tracking-[0.18em] uppercase text-primary mb-4">Private Beta</p>
+            <h1 class="text-5xl md:text-6xl font-bold leading-tighter tracking-tighter font-heading mb-5">
+              Complete protection for AI.
+            </h1>
+            <p class="text-xl text-muted mb-6">
+              Observe and protect all LLM and agent traffic without MITM proxies or certificate breakage.
+            </p>
+
+            <div class="my-8 space-y-4">
+              <p>
+                What makes Archodex different is its coverage. Archodex monitors the full payloads of AI network
+                activity without introducing MITM or MCP proxies, CA certificate management, or breakage from mTLS and
+                certificate pinning.
+              </p>
+              <p>
+                Archodex protects AI activity at the endpoint, controlling both LLM traffic and tool-driven access to
+                internal and external services. It enforces policies to allow, block, redact, and tokenize sensitive
+                data before risky activity turns into leakage or unauthorized actions.
+              </p>
+            </div>
+
+            <div class="lg:hidden mb-8 flex justify-center">
+              <Button variant="primary" href="#form" text="Request Access" icon="tabler:arrow-down" />
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-3">
+              {
+                audienceCards.map(({ title, description }) => (
+                  <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] text-center">
+                    <h3 class="text-xl font-bold tracking-tight font-heading mb-3 min-h-[2lh]">{title}</h3>
+                    <p class="text-muted">{description}</p>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+
+          <div id="form" class="scroll-mt-28">
+            <div
+              class="rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-5 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.08)]"
+            >
+              <div class="mb-6">
+                <h3 class="text-sm font-semibold tracking-[0.18em] uppercase text-primary mb-2">
+                  Request private beta access
+                </h3>
+              </div>
+
+              <Form
+                client:only="react"
+                inputs={[
+                  { type: 'hidden', name: 'subject', value: 'Private Beta Access Request' },
+                  { type: 'text', name: 'name', label: 'Name' },
+                  { type: 'email', name: 'email', label: 'Email' },
+                ]}
+                textarea={{ label: 'Message', defaultValue: CONTACT_US_MESSAGE, rows: 8 }}
+              >
+                <Button slot="button" variant="primary" type="submit">Request Access</Button>
+              </Form>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
-  </div>
-</ContactLayout>
+    </div>
+  </section>
+</Layout>
