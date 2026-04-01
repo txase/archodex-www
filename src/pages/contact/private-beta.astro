@@ -12,8 +12,8 @@ I would like to request access to the Archodex private beta.
 ---
 
 <ContactLayout title="Real protection for AI, no security theater." prefill={CONTACT_US_MESSAGE} metadata={metadata}>
-  <section class="relative">
-    <div class="max-w-5xl mx-auto px-5 pb-10 md:pb-14 space-y-4">
+  <div>
+    <section class="space-y-4">
       <p>
         Archodex observes and protects AI activity across the host OS, inside devcontainers and container VMs, and in
         compute clusters. It can enforce policy to allow, block, redact, and tokenize sensitive data before risky
@@ -24,8 +24,10 @@ I would like to request access to the Archodex private beta.
         including tool-driven access to internal and external services, even when those channels are protected with TLS.
         There are no MITM proxies, no certificate management burden, and no breakage from mTLS or cert pinning.
       </p>
+    </section>
 
-      <div class="grid gap-4 md:grid-cols-3 mt-8 text-center">
+    <section>
+      <div class="grid gap-4 md:grid-cols-3 mt-20 text-center">
         <div
           class="rounded-lg border border-neutral-200 dark:border-neutral-700 px-5 bg-primary/5 dark:bg-white/5 py-5"
         >
@@ -56,6 +58,6 @@ I would like to request access to the Archodex private beta.
           </p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </ContactLayout>

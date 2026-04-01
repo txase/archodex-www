@@ -2,6 +2,7 @@
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import ContactUs from '~/components/widgets/Contact.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
 export interface Props {
   title?: string;
@@ -19,7 +20,13 @@ const { title, prefill } = Astro.props;
 
   <HeroText title={title || 'Contact'} />
 
-  <slot />
+  {
+    Astro.slots.has('default') && (
+      <WidgetWrapper>
+        <slot />
+      </WidgetWrapper>
+    )
+  }
 
   <ContactUs
     id="form"
