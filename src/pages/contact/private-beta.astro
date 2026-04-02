@@ -18,18 +18,15 @@ I would like to request access to the Archodex private beta.
 const audienceCards = [
   {
     title: 'Individual Builders',
-    description:
-      'Start from a safe default. Block authenticated and read-write traffic first, then selectively allow trusted services as you expand how agents can operate.',
+    description: 'Safe defaults that block non-public access. Selectively allow trusted services.',
   },
   {
     title: 'Security and Platform Teams',
-    description:
-      'Enable and control AI usage without complicated proxies that break authentication and miss agent behavior across your internal services and resources.',
+    description: 'Centralized governance for AI usage across your organization.',
   },
   {
     title: 'Advanced Agent Workloads',
-    description:
-      'Pair Archodex with agent sandboxes, like NVIDIA OpenShell, to add network-level visibility and policy enforcement for tool use and service access.',
+    description: 'Archodex pairs well with agent sandboxes, like NVIDIA OpenShell and NemoClaw.',
   },
 ];
 ---
@@ -43,8 +40,10 @@ const audienceCards = [
         <div class="grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,28rem)] lg:items-start">
           <div class="lg:max-w-3xl">
             <p class="text-sm font-semibold tracking-[0.18em] uppercase text-primary mb-4">Private Beta</p>
-            <h1 class="text-5xl md:text-6xl font-bold leading-tighter tracking-tighter font-heading mb-5">
-              Complete protection for AI.
+            <h1
+              class="text-5xl md:text-6xl text-center lg:text-left font-bold leading-tighter tracking-tighter font-heading mb-5"
+            >
+              Complete protection for AI
             </h1>
             <p class="text-xl text-muted mb-6">
               Observe and protect all LLM and agent traffic without MITM proxies or certificate breakage.
@@ -52,14 +51,13 @@ const audienceCards = [
 
             <div class="my-8 space-y-4">
               <p>
-                What makes Archodex different is its coverage. Archodex monitors the full payloads of AI network
-                activity without introducing MITM or MCP proxies, CA certificate management, or breakage from mTLS and
-                certificate pinning.
+                What makes Archodex different is its coverage. Archodex monitors all AI network traffic, in full,
+                including LLM and tool / MCP server traffic. Archodex protects your host OS, agent sandboxes,
+                devcontainers, and server workloads.
               </p>
               <p>
-                Archodex protects AI activity at the endpoint, controlling both LLM traffic and tool-driven access to
-                internal and external services. It enforces policies to allow, block, redact, and tokenize sensitive
-                data before risky activity turns into leakage or unauthorized actions.
+                Archodex enforces policies to allow, block, redact, and tokenize sensitive data before risky activity
+                turns into leakage or unauthorized actions.
               </p>
             </div>
 
@@ -70,9 +68,11 @@ const audienceCards = [
             <div class="grid gap-4 md:grid-cols-3">
               {
                 audienceCards.map(({ title, description }) => (
-                  <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] text-center">
-                    <h3 class="text-xl font-bold tracking-tight font-heading mb-3 min-h-[2lh]">{title}</h3>
-                    <p class="text-muted">{description}</p>
+                  <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+                    <h3 class="text-xl text-primary text-center font-bold tracking-tight font-heading mb-3 min-h-[2lh]">
+                      {title}
+                    </h3>
+                    <p class="">{description}</p>
                   </div>
                 ))
               }
