@@ -16,7 +16,7 @@ const Form: React.FC<FormProps> = ({ inputs, textarea, disclaimer, button, descr
     e.preventDefault();
 
     const formData = new FormData(e.target as HTMLFormElement);
-    formData.append('access_key', '16ecc69a-3fff-4f54-b8bd-9c62bc40e5ca');
+    formData.append('access_key', '24e4f048-defc-4f56-9aa2-b7814e26a9cc');
 
     const response = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
 
