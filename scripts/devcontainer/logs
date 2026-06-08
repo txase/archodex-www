@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=./common.sh
+source "${SCRIPT_DIR}/common.sh"
+
+args=()
+has_tail=0
+has_follow=0
+
+for arg in "$@"; do
+  case "${arg}" in
+    --tail|--tail=*)
+      has_tail=1
+      args+=("${arg}")
+      ;;
+    -f|--follow)
+      has_follow=1
+      args+=("${arg}")
+      ;;
+    --no-follow)
+      has_follow=1
+      ;;
+    *)
+      args+=("${arg}")
+      ;;
+  esac
+done
+
+if [[ "${has_tail}" -eq 0 ]]; then
+  if [[ "${#args[@]}" -eq 0 ]]; then
+    args=(--tail=100)
+  else
+    args=(--tail=100 "${args[@]}")
+  fi
+fi
+
+if [[ "${has_follow}" -eq 0 ]]; then
+  if [[ "${#args[@]}" -eq 0 ]]; then
+    args=(-f)
+  else
+    args=(-f "${args[@]}")
+  fi
+fi
+
+compose logs "${args[@]}" "${DEVCONTAINER_SERVICE}"

@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=./common.sh
+source "${SCRIPT_DIR}/common.sh"
+
+usage() {
+  cat <<'EOF'
+Usage: scripts/devcontainer/exec <command> [args...]
+
+Runs a command inside the Astro devcontainer.
+EOF
+}
+
+if [[ $# -eq 0 ]]; then
+  usage >&2
+  exit 2
+fi
+
+if ! container_running; then
+  echo "Devcontainer is not running. Start it with scripts/devcontainer/start." >&2
+  exit 1
+fi
+
+tty_args=()
+if [[ ! -t 0 || ! -t 1 ]]; then
+  tty_args=(-T)
+fi
+
+if [[ "${#tty_args[@]}" -eq 0 ]]; then
+  compose exec "${DEVCONTAINER_SERVICE}" "$@"
+else
+  compose exec "${tty_args[@]}" "${DEVCONTAINER_SERVICE}" "$@"
+fi

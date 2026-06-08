@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=./common.sh
+source "${SCRIPT_DIR}/common.sh"
+
+auto=0
+restart=0
+timeout_seconds="${DEVCONTAINER_START_TIMEOUT:-300}"
+
+usage() {
+  cat <<'EOF'
+Usage: scripts/devcontainer/start [--auto] [--restart]
+
+Starts the Astro devcontainer and waits for http://127.0.0.1:4321/.
+
+Options:
+  --auto      Leave a running, ready devcontainer alone.
+  --restart   Recreate the devcontainer service before waiting.
+  --help      Show this help.
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --auto)
+      auto=1
+      ;;
+    --restart)
+      restart=1
+      ;;
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      usage >&2
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+load_project_env
+
+if [[ "${auto}" -eq 1 ]] && container_running && url_ready; then
+  echo "Astro devcontainer is already running at ${ASTRO_DEV_URL}"
+  exit 0
+fi
+
+if [[ "${restart}" -eq 1 ]]; then
+  compose up -d --force-recreate "${DEVCONTAINER_SERVICE}"
+elif container_running && ! url_ready; then
+  compose restart "${DEVCONTAINER_SERVICE}"
+else
+  compose up -d "${DEVCONTAINER_SERVICE}"
+fi
+
+deadline=$((SECONDS + timeout_seconds))
+until url_ready; do
+  if (( SECONDS >= deadline )); then
+    echo "Timed out waiting for ${ASTRO_DEV_URL}" >&2
+    compose ps "${DEVCONTAINER_SERVICE}" >&2 || true
+    compose logs --tail=80 "${DEVCONTAINER_SERVICE}" >&2 || true
+    exit 1
+  fi
+  sleep 2
+done
+
+echo "Astro dev server is ready at ${ASTRO_DEV_URL}"

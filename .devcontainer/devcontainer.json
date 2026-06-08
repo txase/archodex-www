@@ -1,0 +1,12 @@
+{
+  "name": "Archodex Website",
+  "dockerComposeFile": "compose.yaml",
+  "service": "web",
+  "workspaceFolder": "/workspace",
+  "overrideCommand": false,
+  "forwardPorts": [4321],
+  "portsAttributes": { "4321": { "label": "Astro dev server", "onAutoForward": "notify" } },
+  "customizations": {
+    "vscode": { "extensions": ["astro-build.astro-vscode", "esbenp.prettier-vscode", "dbaeumer.vscode-eslint"] }
+  }
+}

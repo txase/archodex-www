@@ -1,0 +1,37 @@
+name: archodex-www-dev
+
+services:
+  web:
+    image: node:lts
+    working_dir: /workspace
+    command: >
+      sh -lc "npm ci && npm run dev -- --host 0.0.0.0 --port 4321"
+    environment:
+      HUSKY: '0'
+      PUBLIC_ARCHODEX_DOMAIN: ${PUBLIC_ARCHODEX_DOMAIN:-localhost}
+      PUBLIC_POSTHOG_PROJECT_API_KEY: ${PUBLIC_POSTHOG_PROJECT_API_KEY:-}
+    ports:
+      - '127.0.0.1:4321:4321'
+    volumes:
+      - ${WORKSPACE_ROOT:-..}:/workspace:cached
+      - ${WORKSPACE_ROOT:-..}/.codex:/workspace/.codex:ro
+      - ${WORKSPACE_ROOT:-..}/.devcontainer:/workspace/.devcontainer:ro
+      - ${WORKSPACE_ROOT:-..}/scripts/devcontainer:/workspace/scripts/devcontainer:ro
+      - ${WORKSPACE_ROOT:-..}/AGENTS.md:/workspace/AGENTS.md:ro
+      - node_modules:/workspace/node_modules
+      - npm_cache:/root/.npm
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'node -e "fetch(''http://127.0.0.1:4321/'').then((res) => process.exit(res.ok ? 0 : 1)).catch(() =>
+          process.exit(1))"',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  node_modules:
+  npm_cache:
