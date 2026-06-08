@@ -23,11 +23,55 @@ const pathFromPage = (dir: URL, page: { pathname: string }) => {
   }
 };
 
-export const astroCSPHashGenerator: (config: {
+type CSPConfig = {
   base: string;
   additionalScriptSrc?: string;
   additionalStyleSrc?: string;
-}) => AstroIntegration = ({ base, additionalScriptSrc = '', additionalStyleSrc = '' }) => ({
+  additionalStyleAttrSrc?: string;
+};
+
+type CSPOverride = Partial<CSPConfig>;
+
+type AstroCSPHashGeneratorConfig = CSPConfig & { pageOverrides?: Record<string, CSPOverride> };
+
+const sourceList = (...sources: string[]) =>
+  sources
+    .map((source) => source.trim())
+    .filter(Boolean)
+    .join(' ');
+
+const buildCSPString = ({
+  base,
+  scriptHashes,
+  styleElemHashes,
+  additionalScriptSrc = '',
+  additionalStyleSrc = '',
+  additionalStyleAttrSrc = '',
+  additionalDirectives = '',
+}: CSPConfig & { scriptHashes: Set<string>; styleElemHashes: Set<string>; additionalDirectives?: string }) => {
+  const styleElemSources = additionalStyleSrc.includes("'unsafe-inline'")
+    ? additionalStyleSrc
+    : sourceList(styleElemHashes.values().toArray().join(' '), additionalStyleSrc);
+  const styleAttrSources = additionalStyleAttrSrc.includes("'unsafe-inline'")
+    ? additionalStyleAttrSrc
+    : sourceList(`'unsafe-hashes' '${ASTRO_IMAGE_LAYOUT_INLINE_STYLE_HASH}'`, additionalStyleAttrSrc);
+
+  return (
+    `${base.replace(/;$/, '')}; ` +
+    `script-src ${sourceList("'self'", scriptHashes.values().toArray().join(' '), additionalScriptSrc)}; ` +
+    `style-src-elem ${sourceList("'self'", styleElemSources)}; ` +
+    `style-src-attr ${styleAttrSources};` +
+    (additionalDirectives ? ` ${additionalDirectives}` : '')
+  );
+};
+
+export const astroCSPHashGenerator: (config: AstroCSPHashGeneratorConfig) => AstroIntegration = ({
+  base,
+  additionalScriptSrc = '',
+  additionalStyleSrc = '',
+  additionalStyleAttrSrc = '',
+  pageOverrides = {},
+}) => ({
   name: 'astro-csp-hash-generator',
   hooks: {
     'astro:build:done': async ({ dir, pages, logger }) => {
@@ -55,18 +99,18 @@ export const astroCSPHashGenerator: (config: {
         }
       }
 
-      const CSPString =
-        `${base.replace(/;$/, '')}; ` +
-        `script-src 'self' ${scriptHashes.values().toArray().join(' ')} ${additionalScriptSrc}; ` +
-        `style-src-elem 'self' ${styleElemHashes.values().toArray().join(' ')} ${additionalStyleSrc}; ` +
-        `style-src-attr 'unsafe-hashes' '${ASTRO_IMAGE_LAYOUT_INLINE_STYLE_HASH}';`;
+      const cspConfig: CSPConfig = { base, additionalScriptSrc, additionalStyleSrc, additionalStyleAttrSrc };
 
-      const starlightCSPString =
-        `${base.replace(/;$/, '')}; ` +
-        `script-src 'self' ${scriptHashes.values().toArray().join(' ')} ${additionalScriptSrc}; ` +
-        `style-src-elem 'self' 'unsafe-inline' ${additionalStyleSrc}; ` +
-        "style-src-attr 'unsafe-inline'; " +
-        "img-src 'self' data:;";
+      const CSPString = buildCSPString({ ...cspConfig, scriptHashes, styleElemHashes });
+
+      const starlightCSPString = buildCSPString({
+        ...cspConfig,
+        additionalStyleSrc: sourceList("'unsafe-inline'", additionalStyleSrc),
+        additionalStyleAttrSrc: "'unsafe-inline'",
+        additionalDirectives: "img-src 'self' data:;",
+        scriptHashes,
+        styleElemHashes,
+      });
 
       for (const page of pages) {
         const filePath = pathFromPage(dir, page);
@@ -85,7 +129,12 @@ export const astroCSPHashGenerator: (config: {
 
         logger.info(`Generated CSP for ${filePath}`);
 
-        const csp = page.pathname.startsWith('docs') ? starlightCSPString : CSPString;
+        const pageOverride = pageOverrides[page.pathname];
+        const csp = page.pathname.startsWith('docs')
+          ? starlightCSPString
+          : pageOverride
+            ? buildCSPString({ ...cspConfig, ...pageOverride, scriptHashes, styleElemHashes })
+            : CSPString;
         const metaCSP = new HTMLElement('meta', {}, `http-equiv="Content-Security-Policy" content="${csp}"`);
 
         head.prepend(metaCSP);

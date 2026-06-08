@@ -28,6 +28,12 @@ const hasExternalScripts = false;
 const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroIntegration)[] = []) =>
   hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
 
+const defaultCSPBase = [
+  "default-src 'self';",
+  `connect-src 'self' https://rules.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://api.web3forms.com/submit;`,
+  "frame-src 'self';",
+].join(' ');
+
 export default defineConfig({
   output: 'static',
 
@@ -65,13 +71,20 @@ export default defineConfig({
     astrowind({ config: './src/config.yaml' }),
 
     astroCSPHashGenerator({
-      base: [
-        "default-src 'self';",
-        `connect-src 'self' https://rules.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://api.web3forms.com/submit;`,
-        "frame-src 'self' https://app.cal.com/chasedouglas/archodex-onboarding/embed;",
-      ].join(' '),
-      additionalScriptSrc: `'wasm-unsafe-eval' https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://app.cal.com/embed/embed.js`,
+      base: defaultCSPBase,
+      additionalScriptSrc: `'wasm-unsafe-eval' https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN}`,
       additionalStyleSrc: `https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN}`,
+      pageOverrides: {
+        'ai-devsummit': {
+          base: defaultCSPBase.replace(
+            "frame-src 'self';",
+            "frame-src 'self' https://app.cal.com/chasedouglas/archodex-onboarding/embed;",
+          ),
+          additionalScriptSrc: `'wasm-unsafe-eval' https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://app.cal.com/embed/embed.js`,
+          additionalStyleSrc: `'unsafe-inline' https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN}`,
+          additionalStyleAttrSrc: "'unsafe-inline'",
+        },
+      },
     }),
 
     react(),
