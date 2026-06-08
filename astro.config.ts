@@ -68,8 +68,9 @@ export default defineConfig({
       base: [
         "default-src 'self';",
         `connect-src 'self' https://rules.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://api.web3forms.com/submit;`,
+        "frame-src 'self' https://app.cal.com/chasedouglas/archodex-onboarding/embed;",
       ].join(' '),
-      additionalScriptSrc: `'wasm-unsafe-eval' https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN}`,
+      additionalScriptSrc: `'wasm-unsafe-eval' https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://app.cal.com/embed/embed.js`,
       additionalStyleSrc: `https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN}`,
     }),
 
