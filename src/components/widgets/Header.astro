@@ -21,6 +21,7 @@ const {
 } = Astro.props;
 
 const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
+const hasMenuItems = links.length > 0;
 ---
 
 <header
@@ -61,108 +62,114 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
         <a class="flex items-center w-max" href={getHomePermalink()}>
           <Logo />
         </a>
-        <div class="flex items-center md:hidden">
-          <ToggleMenu />
-        </div>
+        {
+          hasMenuItems && (
+            <div class="flex items-center md:hidden">
+              <ToggleMenu />
+            </div>
+          )
+        }
       </div>
-      <div id="nav-shade" class="fixed top-0 left-0 w-screen h-[calc(100vh+48px)] bg-black opacity-50 hidden"></div>
-      <nav
-        class:list={[
-          'hidden',
-          'absolute',
-          'top-0',
-          'right-0',
-          'w-full',
-          'h-[calc(100vh-48px)]',
-          'overflow-y-auto',
-          'overflow-x-hidden',
-          'md:static',
-          'md:top-auto',
-          'md:bottom-auto',
-          'md:right-auto',
-          'md:h-auto',
-          'md:flex',
-          'md:mx-5',
-          'md:overflow-y-visible',
-          'md:overflow-x-auto',
-          'px-3',
-          'items-center',
-          'md:justify-self-center',
-          'bg-page',
-          'md:bg-transparent',
-          'shadow-xl',
-          'md:shadow-none',
-          'text-default',
-          'overscroll-contain',
-        ]}
-        aria-label="Main navigation"
-      >
-        <div class="mt-3 flex items-center justify-end md:hidden">
-          <ToggleMenu expanded />
-        </div>
-        <ul
-          class="flex flex-col md:flex-row md:self-center w-full text-xl md:text-[0.9375rem] tracking-[0.01rem] font-medium"
-        >
-          {
-            links.map(({ text, href, links }) => (
-              <li class={links?.length ? 'dropdown' : ''}>
-                {links?.length ? (
-                  <>
-                    <button
-                      type="button"
-                      class="hover:text-link dark:hover:text-primary lg:px-4 py-3 flex items-center whitespace-nowrap"
-                    >
-                      {text}{' '}
-                      <Icon
-                        name="tabler:chevron-down"
-                        class="w-4 h-4 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline text-primary"
-                      />
-                    </button>
-                    <ul class="dropdown-menu md:backdrop-blur-md rounded md:absolute pl-4 md:pl-0 md:hidden font-medium bg-page dark:bg-neutral-700 md:min-w-[200px] md:drop-shadow-xl">
-                      {links.map(({ text, href, icon, openInNewTab }) => (
-                        <li>
-                          <a
-                            class:list={[
-                              'first:rounded-t',
-                              'last:rounded-b',
-                              'hover:text-link',
-                              'dark:hover:text-primary',
-                              'py-2',
-                              'px-5',
-                              'block',
-                              'whitespace-no-wrap',
-                              'flex',
-                              'items-stretch',
-                              'gap-1',
-                              { 'aw-link-active': href === currentPath },
-                            ]}
-                            href={href}
-                            target={openInNewTab ? '_blank' : undefined}
-                            rel={openInNewTab ? 'noopener noreferrer' : undefined}
-                          >
-                            {text}
-                            {icon && <Icon name={icon} class="size-[unset]" />}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                ) : (
-                  <a
-                    class:list={[
-                      'hover:text-link dark:hover:text-primary px-4 py-3 flex items-center whitespace-nowrap',
-                      { 'aw-link-active': href === currentPath },
-                    ]}
-                    href={href}
-                  >
-                    {text}
-                  </a>
-                )}
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
+      {
+        hasMenuItems && (
+          <>
+            <div id="nav-shade" class="fixed top-0 left-0 w-screen h-[calc(100vh+48px)] bg-black opacity-50 hidden" />
+            <nav
+              class:list={[
+                'hidden',
+                'absolute',
+                'top-0',
+                'right-0',
+                'w-full',
+                'h-[calc(100vh-48px)]',
+                'overflow-y-auto',
+                'overflow-x-hidden',
+                'md:static',
+                'md:top-auto',
+                'md:bottom-auto',
+                'md:right-auto',
+                'md:h-auto',
+                'md:flex',
+                'md:mx-5',
+                'md:overflow-y-visible',
+                'md:overflow-x-auto',
+                'px-3',
+                'items-center',
+                'md:justify-self-center',
+                'bg-page',
+                'md:bg-transparent',
+                'shadow-xl',
+                'md:shadow-none',
+                'text-default',
+                'overscroll-contain',
+              ]}
+              aria-label="Main navigation"
+            >
+              <div class="mt-3 flex items-center justify-end md:hidden">
+                <ToggleMenu expanded />
+              </div>
+              <ul class="flex flex-col md:flex-row md:self-center w-full text-xl md:text-[0.9375rem] tracking-[0.01rem] font-medium">
+                {links.map(({ text, href, links }) => (
+                  <li class={links?.length ? 'dropdown' : ''}>
+                    {links?.length ? (
+                      <>
+                        <button
+                          type="button"
+                          class="hover:text-link dark:hover:text-primary lg:px-4 py-3 flex items-center whitespace-nowrap"
+                        >
+                          {text}{' '}
+                          <Icon
+                            name="tabler:chevron-down"
+                            class="w-4 h-4 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline text-primary"
+                          />
+                        </button>
+                        <ul class="dropdown-menu md:backdrop-blur-md rounded md:absolute pl-4 md:pl-0 md:hidden font-medium bg-page dark:bg-neutral-700 md:min-w-[200px] md:drop-shadow-xl">
+                          {links.map(({ text, href, icon, openInNewTab }) => (
+                            <li>
+                              <a
+                                class:list={[
+                                  'first:rounded-t',
+                                  'last:rounded-b',
+                                  'hover:text-link',
+                                  'dark:hover:text-primary',
+                                  'py-2',
+                                  'px-5',
+                                  'block',
+                                  'whitespace-no-wrap',
+                                  'flex',
+                                  'items-stretch',
+                                  'gap-1',
+                                  { 'aw-link-active': href === currentPath },
+                                ]}
+                                href={href}
+                                target={openInNewTab ? '_blank' : undefined}
+                                rel={openInNewTab ? 'noopener noreferrer' : undefined}
+                              >
+                                {text}
+                                {icon && <Icon name={icon} class="size-[unset]" />}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    ) : (
+                      <a
+                        class:list={[
+                          'hover:text-link dark:hover:text-primary px-4 py-3 flex items-center whitespace-nowrap',
+                          { 'aw-link-active': href === currentPath },
+                        ]}
+                        href={href}
+                      >
+                        {text}
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </>
+        )
+      }
       <div
         class:list={[
           { 'ml-auto rtl:ml-0 rtl:mr-auto min-w-fit': position === 'left' },
