@@ -1,0 +1,17 @@
+approval_policy = "untrusted"
+sandbox_mode = "workspace-write"
+default_permissions = "archodex-www"
+
+[features]
+hooks = true
+
+[permissions.archodex-www]
+description = "Archodex website project editing with privileged project files read-only."
+extends = ":workspace"
+
+[permissions.archodex-www.filesystem.":workspace_roots"]
+".git" = "write"
+".codex" = "read"
+".devcontainer" = "read"
+"scripts/devcontainer" = "read"
+"AGENTS.md" = "read"

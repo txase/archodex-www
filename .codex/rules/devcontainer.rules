@@ -1,0 +1,255 @@
+prefix_rule(
+    pattern = ["./scripts/devcontainer/start"],
+    decision = "allow",
+    justification = "Allow the project devcontainer startup wrapper.",
+    match = [
+        "./scripts/devcontainer/start",
+        "./scripts/devcontainer/start --auto",
+        "./scripts/devcontainer/start --restart",
+    ],
+)
+
+prefix_rule(
+    pattern = ["scripts/devcontainer/start"],
+    decision = "allow",
+    justification = "Allow the project devcontainer startup wrapper.",
+    match = [
+        "scripts/devcontainer/start",
+        "scripts/devcontainer/start --auto",
+        "scripts/devcontainer/start --restart",
+    ],
+)
+
+prefix_rule(
+    pattern = ["./scripts/devcontainer/exec"],
+    decision = "allow",
+    justification = "Allow project commands to run inside the devcontainer.",
+    match = [
+        "./scripts/devcontainer/exec npm run check",
+        "./scripts/devcontainer/exec npm run check:astro",
+    ],
+)
+
+prefix_rule(
+    pattern = ["scripts/devcontainer/exec"],
+    decision = "allow",
+    justification = "Allow project commands to run inside the devcontainer.",
+    match = [
+        "scripts/devcontainer/exec npm run check",
+        "scripts/devcontainer/exec npm run check:astro",
+    ],
+)
+
+prefix_rule(
+    pattern = ["./scripts/devcontainer/logs"],
+    decision = "allow",
+    justification = "Allow reading devcontainer dev-server logs.",
+    match = [
+        "./scripts/devcontainer/logs",
+        "./scripts/devcontainer/logs --tail 50",
+    ],
+)
+
+prefix_rule(
+    pattern = ["scripts/devcontainer/logs"],
+    decision = "allow",
+    justification = "Allow reading devcontainer dev-server logs.",
+    match = [
+        "scripts/devcontainer/logs",
+        "scripts/devcontainer/logs --tail 50",
+    ],
+)
+
+prefix_rule(
+    pattern = ["./scripts/devcontainer/stop"],
+    decision = "allow",
+    justification = "Allow stopping the project devcontainer without deleting it.",
+    match = [
+        "./scripts/devcontainer/stop",
+    ],
+)
+
+prefix_rule(
+    pattern = ["scripts/devcontainer/stop"],
+    decision = "allow",
+    justification = "Allow stopping the project devcontainer without deleting it.",
+    match = [
+        "scripts/devcontainer/stop",
+    ],
+)
+
+prefix_rule(
+    pattern = ["docker"],
+    decision = "prompt",
+    justification = "Use scripts/devcontainer/* wrappers for Docker-backed project commands.",
+)
+
+prefix_rule(
+    pattern = ["npm"],
+    decision = "prompt",
+    justification = "Run project npm commands through scripts/devcontainer/exec.",
+)
+
+prefix_rule(
+    pattern = ["node"],
+    decision = "prompt",
+    justification = "Run project Node commands through scripts/devcontainer/exec.",
+)
+
+prefix_rule(
+    pattern = ["npx"],
+    decision = "prompt",
+    justification = "Run project npx commands through scripts/devcontainer/exec.",
+)
+
+prefix_rule(
+    pattern = ["astro"],
+    decision = "prompt",
+    justification = "Run Astro commands through scripts/devcontainer/exec.",
+)
+
+prefix_rule(
+    pattern = ["git", "status"],
+    decision = "allow",
+    justification = "Allow local Git status inspection.",
+    match = [
+        "git status",
+        "git status --short",
+        "git status --short --branch",
+        "git status --short --untracked-files=all",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "diff"],
+    decision = "allow",
+    justification = "Allow local Git diff inspection.",
+    match = [
+        "git diff",
+        "git diff --stat",
+        "git diff --check",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "log"],
+    decision = "allow",
+    justification = "Allow local Git history inspection.",
+    match = [
+        "git log",
+        "git log --oneline",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "show"],
+    decision = "allow",
+    justification = "Allow local Git object inspection.",
+    match = [
+        "git show",
+        "git show --stat",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "blame"],
+    decision = "allow",
+    justification = "Allow local Git blame inspection.",
+    match = [
+        "git blame README.md",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "branch"],
+    decision = "allow",
+    justification = "Allow local Git branch inspection and management.",
+    match = [
+        "git branch",
+        "git branch --show-current",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "switch"],
+    decision = "allow",
+    justification = "Allow local Git branch switching and creation.",
+    match = [
+        "git switch main",
+        "git switch -c codex/example",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "rev-parse"],
+    decision = "allow",
+    justification = "Allow local Git revision/path inspection.",
+    match = [
+        "git rev-parse --show-toplevel",
+        "git rev-parse --abbrev-ref HEAD",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "merge-base"],
+    decision = "allow",
+    justification = "Allow local Git merge-base inspection.",
+    match = [
+        "git merge-base HEAD origin/main",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "ls-files"],
+    decision = "allow",
+    justification = "Allow local Git tracked-file inspection.",
+    match = [
+        "git ls-files",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "grep"],
+    decision = "allow",
+    justification = "Allow local Git content search.",
+    match = [
+        "git grep devcontainer",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "describe"],
+    decision = "allow",
+    justification = "Allow local Git revision description.",
+    match = [
+        "git describe --tags --always",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "add"],
+    decision = "allow",
+    justification = "Allow local Git staging.",
+    match = [
+        "git add README.md",
+        "git add .codex/rules/devcontainer.rules",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "restore", "--staged"],
+    decision = "allow",
+    justification = "Allow local Git unstaging without changing the worktree.",
+    match = [
+        "git restore --staged README.md",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "commit"],
+    decision = "allow",
+    justification = "Allow creating local Git commits.",
+    match = [
+        "git commit -m example",
+    ],
+)

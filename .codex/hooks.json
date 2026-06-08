@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/devcontainer/start --auto",
+            "timeout": 600,
+            "statusMessage": "Starting Astro devcontainer"
+          }
+        ]
+      }
+    ]
+  }
+}
