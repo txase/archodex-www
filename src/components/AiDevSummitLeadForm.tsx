@@ -248,7 +248,7 @@ const AiDevSummitLeadForm = () => {
     namespacedCal('ui', {
       hideEventTypeDetails: false,
       layout: 'month_view',
-      styles: { branding: { brandColor: '#ee847b' } },
+      cssVarsPerTheme: { light: { 'cal-brand': '#ee847b' }, dark: { 'cal-brand': '#ee847b' } },
     });
 
     return () => window.removeEventListener('archodex:cal-embed-error', handleCalError);
