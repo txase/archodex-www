@@ -33,8 +33,23 @@ interface SubmittedLead {
 type CalQueueItem = unknown[];
 type CalApi = ((...args: unknown[]) => void) & { loaded?: boolean; ns?: Record<string, CalApi>; q?: CalQueueItem[] };
 type CalPrefillConfig = Record<string, string>;
+type CalEvent<TData = Record<string, unknown>> = { detail?: { data?: TData; type?: string; namespace?: string } };
+type CalBookingSuccessfulData = {
+  allBookings?: unknown;
+  eventTypeId?: number | null;
+  isRecurring?: boolean;
+  paymentRequired?: boolean;
+  status?: string;
+};
+type PostHogProperties = Record<string, boolean | number | string | string[] | null | undefined>;
+type PostHogApi = { capture?: (eventName: string, properties?: PostHogProperties) => void };
 
 type CalWindow = Window & { Cal?: CalApi };
+type AnalyticsWindow = Window & { posthog?: PostHogApi };
+
+const capturePostHogEvent = (eventName: string, properties: PostHogProperties) => {
+  (window as AnalyticsWindow).posthog?.capture?.(eventName, properties);
+};
 
 const pushCalCommand = (api: CalApi, args: CalQueueItem) => {
   api.q = api.q || [];
@@ -115,6 +130,28 @@ const getCalendarPreviewLead = (): SubmittedLead | null => {
 
   return { name: '', email: '', useCases: [], useCaseDetails: '', featureInterests: [] };
 };
+
+const createBaseAnalyticsProperties = (): PostHogProperties => ({
+  cal_link: CAL_LINK,
+  is_calendar_preview: hasCalendarPreviewParam(),
+  lead_source: LEAD_SOURCE,
+  page: 'ai-devsummit',
+});
+
+const createLeadAnalyticsProperties = ({
+  useCases,
+  useCaseDetails,
+  featureInterests,
+}: SubmittedLead): PostHogProperties => ({
+  ...createBaseAnalyticsProperties(),
+  feature_interest_count: featureInterests.length,
+  feature_interests: featureInterests,
+  has_use_case_details: Boolean(useCaseDetails),
+  use_case_count: useCases.length,
+  use_cases: useCases,
+});
+
+const getBookingCount = (allBookings: unknown) => (Array.isArray(allBookings) ? allBookings.length : undefined);
 
 const formatMarkdownList = (values: string[]) =>
   values.length ? values.map((value) => `- ${value}`).join('\n') : '- Not specified';
@@ -239,6 +276,21 @@ const AiDevSummitLeadForm = () => {
 
     namespacedCal('on', { action: 'linkReady', callback: () => setCalendarStatus('ready') });
     namespacedCal('on', { action: 'linkFailed', callback: () => setCalendarStatus('error') });
+    namespacedCal('on', {
+      action: 'bookingSuccessfulV2',
+      callback: (event: CalEvent<CalBookingSuccessfulData>) => {
+        const data = event.detail?.data;
+
+        capturePostHogEvent('ai_devsummit_calendar_booking_successful', {
+          ...createLeadAnalyticsProperties(submittedLead),
+          booking_count: getBookingCount(data?.allBookings),
+          booking_status: data?.status,
+          event_type_id: data?.eventTypeId,
+          is_recurring: data?.isRecurring,
+          payment_required: data?.paymentRequired,
+        });
+      },
+    });
     namespacedCal('inline', {
       elementOrSelector: calendarContainer,
       calLink: CAL_LINK,
@@ -298,6 +350,10 @@ const AiDevSummitLeadForm = () => {
       }
 
       setSubmittedLead({ name, email, useCases, useCaseDetails, featureInterests });
+      capturePostHogEvent(
+        'ai_devsummit_beta_form_submitted',
+        createLeadAnalyticsProperties({ name, email, useCases, useCaseDetails, featureInterests }),
+      );
       setSubmitStatus('success');
     } catch (error) {
       console.error(error);
