@@ -1,14 +1,16 @@
-import type { FooterData, HeaderData } from './types';
+import type { CallToAction, FooterData, HeaderData } from './types';
 import { getPermalink } from './utils/permalinks';
 
 export const getStartedUrl = getPermalink('/docs/getting-started');
 export const requestDemoUrl = getPermalink('/contact/request-demo');
+export const requestDemoAction = {
+  variant: 'primary',
+  text: 'Request Demo',
+  href: requestDemoUrl,
+  'data-astro-reload': true,
+} satisfies CallToAction;
 
-export const headerData: HeaderData = {
-  links: [],
-  actions: [{ variant: 'primary', text: 'Request Demo', href: requestDemoUrl }],
-  position: 'left',
-};
+export const headerData: HeaderData = { links: [], actions: [requestDemoAction], position: 'left' };
 
 export const footerData: FooterData = {
   links: [

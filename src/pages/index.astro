@@ -11,7 +11,7 @@ import Hero2 from '~/components/widgets/Hero2.astro';
 
 import heroImage from '../assets/images/hero.svg';
 import resourceGraph from '../assets/images/resource-graph-3-2.svg';
-import { requestDemoUrl } from '~/navigation';
+import { requestDemoAction } from '~/navigation';
 
 const metadata = { title: 'Archodex — The Control Plane for AI', ignoreTitleTemplate: true };
 
@@ -32,7 +32,7 @@ const enablements = ['Enabling', 'Accelerating', 'Empowering', 'Fueling'];
       height: 400,
       fetchPriority: 'high',
     }}
-    actions={[{ text: 'Request Demo', href: requestDemoUrl }]}
+    actions={[requestDemoAction]}
   />
 
   <!-- Problem Section *************** -->
@@ -95,7 +95,7 @@ const enablements = ['Enabling', 'Accelerating', 'Empowering', 'Fueling'];
 
   <!-- CallToAction Widget *********** -->
 
-  <CallToAction actions={[{ variant: 'primary', text: 'Request Demo', href: requestDemoUrl }]}>
+  <CallToAction actions={[requestDemoAction]}>
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-primary/5 dark:bg-transparent"></div>
     </Fragment>
