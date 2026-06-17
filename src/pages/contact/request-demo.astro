@@ -1,20 +1,88 @@
 ---
-import ContactLayout from '~/layouts/ContactLayout.astro';
+import Layout from '~/layouts/PageLayout.astro';
+import Header from '~/components/widgets/Header.astro';
+import DemoScheduler from '~/components/DemoScheduler';
+import { Image } from 'astro:assets';
+import bridgeMarketecture from '~/assets/images/ai-devsummit-bridge-marketecture.png';
 
-const CONTACT_US_MESSAGE = `Hi Archodex Team,
+const metadata = {
+  title: 'Request an Archodex Demo',
+  description: 'Schedule an Archodex demo to see AI assistant and workload protection in action.',
+};
 
-I would like to request a demo of Archodex. Specifically, I would like to learn how to:
+const headerData = { links: [], actions: [] };
 
-(Please edit the following list for your specific interests)
-
-- Detect Shadow AI
-- Protect Confidential Data
-- Accelerate AI Product Development
-- Ensure Compliance with Data Security Policies
-- <Other use case>
-
-Regards
-`;
+const highlights = [
+  'Universal policy for AI assistants and workloads',
+  'API key custody, injection, and audit trails',
+  'Shadow AI detection',
+];
 ---
 
-<ContactLayout prefill={CONTACT_US_MESSAGE} />
+<Layout metadata={metadata}>
+  <Header slot="header" {...headerData} isSticky />
+
+  <section class="relative not-prose overflow-hidden">
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6">
+      <div class="py-10 md:py-14 lg:py-16">
+        <div class="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(23rem,30rem)] lg:items-start">
+          <div class="lg:max-w-3xl">
+            <h1
+              class="mb-5 text-center font-heading text-5xl font-bold leading-tighter tracking-tighter md:text-6xl lg:text-left"
+            >
+              Demo request
+            </h1>
+            <p class="mb-6 text-xl text-muted">
+              See how Archodex protects AI assistants and workloads from supply chain attacks and misconfigured tools /
+              confused agents.
+            </p>
+
+            <div class="my-8 space-y-4">
+              <p>
+                Archodex is a Contextual Endpoint Firewall (CEFW) that provides centralized policy enforcement to
+                protect high-risk AI assistant tasks and AI workloads without getting in the way.
+              </p>
+            </div>
+
+            <div class="mb-8 grid gap-3 lg:hidden">
+              {
+                highlights.map((highlight) => (
+                  <div class="flex items-start gap-3 rounded-lg border border-neutral-200 bg-white/80 p-4 dark:border-neutral-700 dark:bg-neutral-900/70">
+                    <span class="mt-1 inline-block size-2 rounded-full bg-primary" />
+                    <p class="m-0 text-sm">{highlight}</p>
+                  </div>
+                ))
+              }
+            </div>
+
+            <div class="mb-6 hidden gap-3 lg:grid">
+              {
+                highlights.map((highlight) => (
+                  <div class="flex items-start gap-3 rounded-lg border border-neutral-200 bg-white/80 p-4 dark:border-neutral-700 dark:bg-neutral-900/70">
+                    <span class="mt-1 inline-block size-2 rounded-full bg-primary" />
+                    <p class="m-0 text-sm">{highlight}</p>
+                  </div>
+                ))
+              }
+            </div>
+
+            <Image
+              src={bridgeMarketecture}
+              alt="Diagram showing Archodex network-layer guardrails for AI assistant and workload traffic"
+              class="hidden w-full rounded-lg lg:block"
+              loading="lazy"
+            />
+          </div>
+
+          <div id="scheduler" class="scroll-mt-28">
+            <div
+              class="rounded-lg border border-neutral-200 bg-white p-5 shadow-[0_20px_60px_rgba(0,0,0,0.08)] dark:border-neutral-700 dark:bg-neutral-900 sm:p-6"
+            >
+              <DemoScheduler client:only="react" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -34,6 +34,13 @@ const defaultCSPBase = [
   "frame-src 'self';",
 ].join(' ');
 
+const createCalEmbedCSPOverride = (calLink: string) => ({
+  base: defaultCSPBase.replace("frame-src 'self';", `frame-src 'self' https://app.cal.com/${calLink}/embed;`),
+  additionalScriptSrc: `'wasm-unsafe-eval' https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://app.cal.com/embed/embed.js`,
+  additionalStyleSrc: `'unsafe-inline' https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN}`,
+  additionalStyleAttrSrc: "'unsafe-inline'",
+});
+
 export default defineConfig({
   output: 'static',
 
@@ -75,15 +82,8 @@ export default defineConfig({
       additionalScriptSrc: `'wasm-unsafe-eval' https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN}`,
       additionalStyleSrc: `https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN}`,
       pageOverrides: {
-        'ai-devsummit': {
-          base: defaultCSPBase.replace(
-            "frame-src 'self';",
-            "frame-src 'self' https://app.cal.com/chasedouglas/archodex-onboarding/embed;",
-          ),
-          additionalScriptSrc: `'wasm-unsafe-eval' https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN} https://app.cal.com/embed/embed.js`,
-          additionalStyleSrc: `'unsafe-inline' https://a.${process.env.PUBLIC_ARCHODEX_DOMAIN}`,
-          additionalStyleAttrSrc: "'unsafe-inline'",
-        },
+        'ai-devsummit': createCalEmbedCSPOverride('chasedouglas/archodex-onboarding'),
+        'contact/request-demo': createCalEmbedCSPOverride('chasedouglas/archodex-demo'),
       },
     }),
 
